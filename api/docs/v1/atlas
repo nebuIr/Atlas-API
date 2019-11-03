@@ -1,0 +1,166 @@
+openapi: 3.0.0
+info:
+  title: Atlas API
+  description: This is a simple API for No Man's Sky news & releases
+  contact:
+    email: support@nebulr.me
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://atlas.nebulr.me/api/v1
+  description: Atlas API
+tags:
+- name: news
+  description: All No Man's Sky news posts
+  externalDocs:
+    description: News source
+    url: https://www.nomanssky.com/news/
+- name: releases
+  description: All No Man's Sky release posts
+  externalDocs:
+    description: Releases source
+    url: https://www.nomanssky.com/release-log/
+- name: version
+  description: Latest No Man's Sky version
+  externalDocs:
+    description: Version source
+    url: https://nomanssky.gamepedia.com/
+paths:
+  /news:
+    get:
+      tags:
+      - news
+      summary: Returns all No Man's Sky news
+      operationId: news
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/News'
+  /releases:
+    get:
+      tags:
+      - releases
+      summary: Returns all No Man's Sky releases
+      operationId: releases
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Release'
+  /version:
+    get:
+      tags:
+      - version
+      summary: Returns latest game version
+      operationId: version
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Version'
+components:
+  schemas:
+    News:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 121
+        url:
+          type: string
+          format: url
+          example: https://example.com/
+        title:
+          type: string
+          example: title
+        timestamp:
+          type: integer
+          format: timestamp
+          example: 1572434915
+        date:
+          type: string
+          format: date-time
+        teaser:
+          type: string
+          example: teaser text
+        image:
+          type: string
+          format: url
+          example: https://example.com/image.png
+        image_small:
+          type: string
+          format: url
+          example: https://example.com/image.png
+        content:
+          type: string
+          example: description text
+    Release:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 69
+        url:
+          type: string
+          format: url
+          example: https://example.com/
+        title:
+          type: string
+          example: title
+        platforms:
+          $ref: '#/components/schemas/Platforms'
+        teaser:
+          type: string
+          example: teaser text
+        image:
+          type: string
+          format: url
+          example: https://example.com/image.png
+        content:
+          type: string
+          example: description text
+    Version:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 0
+        url:
+          type: string
+          format: url
+          example: https://example.com
+        version:
+          type: string
+          example: version number
+        date:
+          type: string
+          format: date
+    Platforms:
+      type: object
+      properties:
+        pc:
+          type: boolean
+          example: true
+        ps4:
+          type: boolean
+          example: false
+        xbox:
+          type: boolean
+          example: false
+      xml:
+        name: Platforms
