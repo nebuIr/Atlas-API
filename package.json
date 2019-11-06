@@ -1,0 +1,16 @@
+{
+  "name": "notifications",
+  "version": "1.0.0",
+  "dependencies": {
+    "firebase-admin": "^8.3.0",
+    "mysql": "latest"
+  },
+  "description": "",
+  "main": "news_notification.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

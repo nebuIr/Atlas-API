@@ -1,0 +1,12 @@
+/.idea/
+/node_modules/
+/public/.env
+/vendor/
+/backend/atlas/v1/news/latest.json
+/backend/atlas/v1/news/posts.json
+/backend/atlas/v1/releases/latest.json
+/backend/atlas/v1/releases/posts.json
+/backend/atlas/v1/version/posts.json
+/backend/atlas/notifications/release_notification.json
+/backend/atlas/notifications/news_notification.json
+/backend/atlas/notifications/firebase-adminsdk.json
