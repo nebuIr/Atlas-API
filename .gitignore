@@ -1,6 +1,6 @@
 /.idea/
 /node_modules/
-/public/.env
+/.env
 /vendor/
 /backend/atlas/v1/news/latest.json
 /backend/atlas/v1/news/posts.json
