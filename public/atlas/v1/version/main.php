@@ -47,11 +47,12 @@ class Version
 
     public function getJsonAllUpdate()
     {
+        $connect = mysqli_connect("$this->db_host", "$this->db_user", "$this->db_pass", "$this->db_name");
         $url = __DIR__ . "/../../../../backend/atlas/v1/version/posts.json";
         $json = file_get_contents($url);
         $data = json_decode($json, true);
         $table = 'version';
-        if ($result = $this->connect->query("SELECT COUNT(1) FROM '".$table."'")) {
+        if ($result = $connect->query("SELECT COUNT(1) FROM '".$table."'")) {
             if($result->num_rows == 1) {
                 foreach ($data as $item) {
                     $this->querySqlUpdate($item);
