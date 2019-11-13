@@ -27,9 +27,9 @@ function updatePosts($url) {
     $item['timestamp'] = $posts->plaintext;
     $timestamp = explode("(",$item['timestamp']);
     $item['timestamp'] = $timestamp[1];
-    $datePattern = array(")");
-    $dateReplace = array("");
-    $timestamp = str_replace($datePattern, $dateReplace, $item['timestamp']);
+    $timestampPattern = array(")");
+    $timestampReplace = array("");
+    $timestamp = str_replace($timestampPattern, $timestampReplace, $item['timestamp']);
     $timestamp = strtotime($timestamp);
     $item['timestamp'] = $timestamp;
     $items[] = $item;

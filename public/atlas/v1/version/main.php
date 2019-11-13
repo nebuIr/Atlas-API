@@ -92,7 +92,7 @@ class Version
             die("Connection failed: " . mysqli_connect_error());
         };
 
-        $sql_set = "INSERT INTO version(url, version, date) VALUES('" . $item["url"] . "', '" . $item["version"] . "', '" . $item["timestamp"] . "')";
+        $sql_set = "INSERT INTO version(url, version, timestamp) VALUES('" . $item["url"] . "', '" . $item["version"] . "', '" . $item["timestamp"] . "')";
         mysqli_query($connect, $sql_set);
         var_dump(mysqli_error_list($connect));
         mysqli_close($connect);
