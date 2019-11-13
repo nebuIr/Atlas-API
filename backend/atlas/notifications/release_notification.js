@@ -2,7 +2,7 @@ require('dotenv').config();
 const mysql = require('mysql');
 const fs = require('fs');
 const send = require("./send.js");
-const filename = './release_notification.json';
+const filename = process.env.NOTIFICATION_PATH + '/release_notification.json';
 const file_content = fs.readFileSync(filename);
 const content = JSON.parse(file_content);
 const oldReleasesCount = content.releasesCount;

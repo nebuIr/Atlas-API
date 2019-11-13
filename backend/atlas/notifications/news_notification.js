@@ -2,7 +2,7 @@ require('dotenv').config();
 const mysql = require('mysql');
 const fs = require('fs');
 const send = require("./send.js");
-const filename = './news_notification.json';
+const filename = process.env.NOTIFICATION_PATH + '/news_notification.json';
 const file_content = fs.readFileSync(filename);
 const content = JSON.parse(file_content);
 const oldNewsCount = content.newsCount;
