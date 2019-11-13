@@ -96,7 +96,7 @@ components:
         excerpt:
           type: string
           example: excerpt text
-        content:
+        body:
           type: string
           example: description text
     Release:
@@ -119,7 +119,7 @@ components:
         excerpt:
           type: string
           example: excerpt text
-        content:
+        body:
           type: string
           example: description text
     Version:
