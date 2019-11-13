@@ -24,13 +24,14 @@ function updatePosts($url) {
         $item['url'] = $url;
     }
     $item['version'] = $posts->find('a', 0)->plaintext;
-    $item['date'] = $posts->plaintext;
-    $date = explode("(",$item['date']);
-    $item['date'] = $date[1];
+    $item['timestamp'] = $posts->plaintext;
+    $timestamp = explode("(",$item['timestamp']);
+    $item['timestamp'] = $timestamp[1];
     $datePattern = array(")");
     $dateReplace = array("");
-    $date = str_replace($datePattern, $dateReplace, $item['date']);
-    $item['date'] = $date;
+    $timestamp = str_replace($datePattern, $dateReplace, $item['timestamp']);
+    $timestamp = strtotime($timestamp);
+    $item['timestamp'] = $timestamp;
     $items[] = $item;
 
     echo 'Updated version: ' . $item['version'] . "\n";

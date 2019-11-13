@@ -88,24 +88,14 @@ components:
         title:
           type: string
           example: title
-        timestamp:
-          type: integer
-          format: timestamp
-          example: 1572434915
         date:
           type: string
           format: date-time
-        teaser:
+        images:
+          $ref: '#/components/schemas/Images'
+        excerpt:
           type: string
-          example: teaser text
-        image:
-          type: string
-          format: url
-          example: https://example.com/image.png
-        image_small:
-          type: string
-          format: url
-          example: https://example.com/image.png
+          example: excerpt text
         content:
           type: string
           example: description text
@@ -124,13 +114,11 @@ components:
           example: title
         platforms:
           $ref: '#/components/schemas/Platforms'
-        teaser:
+        images:
+          $ref: '#/components/schemas/Images'
+        excerpt:
           type: string
-          example: teaser text
-        image:
-          type: string
-          format: url
-          example: https://example.com/image.png
+          example: excerpt text
         content:
           type: string
           example: description text
@@ -149,7 +137,7 @@ components:
           example: version number
         date:
           type: string
-          format: date
+          format: date-time
     Platforms:
       type: object
       properties:
@@ -164,3 +152,14 @@ components:
           example: false
       xml:
         name: Platforms
+    Images:
+      type: object
+      properties:
+        image_large:
+          type: string
+          example: https://example.com/image_large.png
+        image_small:
+          type: string
+          example: https://example.com/image_small.png
+      xml:
+        name: Images

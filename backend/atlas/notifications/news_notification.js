@@ -55,12 +55,11 @@ function getLatestNews(callback) {
             let newsUrl = rows[0].url;
             let newsTitle = rows[0].title;
             let newsTimestamp = rows[0].timestamp;
-            let newsDate = rows[0].date;
-            let newsTeaser = rows[0].teaser;
+            let newsExcerpt = rows[0].excerpt;
             let newsImage = rows[0].image;
-            let newsContent = rows[0].content;
+            let newsBody = rows[0].body;
 
-            return callback(newsId, newsUrl, newsTitle, newsTimestamp, newsDate, newsTeaser, newsImage, newsContent);
+            return callback(newsId, newsUrl, newsTitle, newsTimestamp, newsExcerpt, newsImage, newsBody);
         });
     });
 }
@@ -68,10 +67,10 @@ function getLatestNews(callback) {
 function checkCount(newNewsCount) {
     if (oldNewsCount < newNewsCount) {
         //console.log("oldNewsCount: " + oldNewsCount + " < newNewsCount: " + newNewsCount + " = " + true);
-        getLatestNews(function(newsId, newsUrl, newsTitle, newsTimestamp, newsDate, newsTeaser, newsImage, newsContent){
-            //console.log("===== RESULT LATEST NEWS =====\n===== " + newsId + "\n===== " + newsUrl + "\n===== " + newsTitle + "\n===== " + newsTimestamp + "\n===== " + newsDate + "\n===== " + newsTeaser + "\n===== " + newsImage + "\n===== " + newsContent + "\n===== RESULT LATEST NEWS =====");
+        getLatestNews(function(newsId, newsUrl, newsTitle, newsTimestamp, newsExcerpt, newsImage, newsBody){
+            //console.log("===== RESULT LATEST NEWS =====\n===== " + newsId + "\n===== " + newsUrl + "\n===== " + newsTitle + "\n===== " + newsTimestamp + "\n===== " + newsExcerpt + "\n===== " + newsImage + "\n===== " + newsBody + "\n===== RESULT LATEST NEWS =====");
             var news = "News";
-            send.data.send(news, newsId, newsUrl, newsTitle, newsTimestamp, newsDate, newsTeaser, newsImage, newsContent);
+            send.data.send(news, newsId, newsUrl, newsTitle, newsTimestamp, newsExcerpt, newsImage, newsBody);
             content.newsCount = newNewsCount;
             fs.writeFileSync(filename, JSON.stringify(content));
         });

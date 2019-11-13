@@ -23,20 +23,30 @@ class News
             die("Connection failed: " . mysqli_connect_error());
         }
 
-        $query = "SELECT id, url, title, timestamp, date, teaser, image, image_small, content FROM news ORDER BY id DESC";
+        $query = "SELECT id, url, title, timestamp, excerpt, image, image_small, body FROM news ORDER BY id DESC";
         $data = mysqli_query($connect, $query);
         $output = array();
+        $return_arr = array();
 
         if (mysqli_num_rows($data) > 0) {
             while ($row = mysqli_fetch_assoc($data)) {
-                $output[]=$row;
+                $output['id'] = (int) $row['id'];
+                $output['url'] = $row['url'];
+                $output['title'] = $row['title'];
+                $output['date'] = $timestamp = date('Y-m-d h:m:s', $row['timestamp']);
+                $output['images']['image_large'] = $row['image'];
+                $output['images']['image_small'] = $row['image_small'];
+                $output['excerpt'] = $row['excerpt'];
+                $output['body'] = $row['body'];
+
+                array_push($return_arr, $output);
             }
         }
 
         mysqli_close($connect);
 
         header('Content-Type: application/json');
-        echo json_encode($output);
+        echo json_encode($return_arr);
     }
 
     public function mainSql()
@@ -63,16 +73,15 @@ class News
 
     public function querySqlSet($item)
     {
-        $timestamp = date('F d\, Y \a\t h:iA', $item['timestamp']);
         $connect = mysqli_connect("$this->db_host", "$this->db_user", "$this->db_pass", "$this->db_name");
         if (!$connect) {
             die("Connection failed: " . mysqli_connect_error());
         }
 
-        $query = "INSERT INTO news (url, title, timestamp, date, teaser, image, image_small, content) 
+        $query = "INSERT INTO news (url, title, timestamp, excerpt, image, image_small, body) 
 					SELECT d.*
 					FROM (SELECT
-							'" . $item["url"] . "', '" . $item["title"] . "', '" . $item["timestamp"] . "', '" . $timestamp . "', '" . $item["teaser"] . "', '" . $item["image"] . "', '" . $item["image_small"] . "' AS img_small, '" . $item["content"] . "') AS d
+							'" . $item["url"] . "', '" . $item["title"] . "', '" . $item["timestamp"] . "', '" . $item["excerpt"] . "', '" . $item["image"] . "', '" . $item["image_small"] . "' AS img_small, '" . $item["body"] . "') AS d
 					WHERE 0 IN (SELECT COUNT(*)
 					FROM news WHERE url='" . $item["url"] . "' AND title='" . $item["title"] . "')";
         mysqli_query($connect, $query);
@@ -82,13 +91,12 @@ class News
 
     public function querySqlUpdate($item)
     {
-        $timestamp = date('F d\, Y \a\t h:iA', $item['timestamp']);
         $connect = mysqli_connect("$this->db_host", "$this->db_user", "$this->db_pass", "$this->db_name");
         if (!$connect) {
             die("Connection failed: " . mysqli_connect_error());
         }
 
-        $query = "UPDATE news SET url='" . $item["url"] . "', title='" . $item["title"] . "', date='" . $timestamp . "', teaser='" . $item["teaser"] . "', image='" . $item["image"] . "', image_small='" . $item["image_small"] . "', content='" . $item["content"] . "' WHERE timestamp='" . $item["timestamp"] . "'";
+        $query = "UPDATE news SET url='" . $item["url"] . "', title='" . $item["title"] . "', excerpt='" . $item["excerpt"] . "', image='" . $item["image"] . "', image_small='" . $item["image_small"] . "', body='" . $item["body"] . "' WHERE timestamp='" . $item["timestamp"] . "'";
         mysqli_query($connect, $query);
         var_dump(mysqli_error_list($connect));
         mysqli_close($connect);

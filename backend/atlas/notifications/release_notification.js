@@ -55,12 +55,12 @@ function getLatestReleases(callback) {
             let releasesUrl = rows[0].url;
             let releasesTitle = rows[0].title;
             let releasesPlatforms = rows[0].platforms;
-            let releasesDate = null;
-            let releasesTeaser = rows[0].teaser;
+            let releasesTimestamp = null;
+            let releasesExcerpt = rows[0].excerpt;
             let releasesImage = rows[0].image;
-            let releasesContent = rows[0].content;
+            let releasesBody = rows[0].body;
 
-            return callback(releasesId, releasesUrl, releasesTitle, releasesPlatforms, releasesDate, releasesTeaser, releasesImage, releasesContent);
+            return callback(releasesId, releasesUrl, releasesTitle, releasesPlatforms, releasesTimestamp, releasesExcerpt, releasesImage, releasesBody);
         });
     });
 }
@@ -68,10 +68,10 @@ function getLatestReleases(callback) {
 function checkCount(newReleasesCount) {
     if (oldReleasesCount < newReleasesCount) {
         //console.log("oldReleasesCount: " + oldReleasesCount + " < newReleasesCount: " + newReleasesCount + " = " + true);
-        getLatestReleases(function(releasesId, releasesUrl, releasesTitle, releasesTimestamp, releasesDate, releasesTeaser, releasesImage, releasesContent){
-            //console.log("===== RESULT LATEST NEWS =====\n===== " + releasesId + "\n===== " + releasesUrl + "\n===== " + releasesTitle + "\n===== " + releasesTimestamp + "\n===== " + releasesDate + "\n===== " + releasesTeaser + "\n===== " + releasesImage + "\n===== " + releasesContent + "\n===== RESULT LATEST NEWS =====");
+        getLatestReleases(function(releasesId, releasesUrl, releasesTitle, releasesTimestamp, releasesExcerpt, releasesImage, releasesBody){
+            //console.log("===== RESULT LATEST NEWS =====\n===== " + releasesId + "\n===== " + releasesUrl + "\n===== " + releasesTitle + "\n===== " + releasesTimestamp + "\n===== " + releasesExcerpt + "\n===== " + releasesImage + "\n===== " + releasesBody + "\n===== RESULT LATEST NEWS =====");
             var releases = "Releases";
-            send.data.send(releases, releasesId, releasesUrl, releasesTitle, releasesTimestamp, releasesDate, releasesTeaser, releasesImage, releasesContent);
+            send.data.send(releases, releasesId, releasesUrl, releasesTitle, releasesTimestamp, releasesExcerpt, releasesImage, releasesBody);
             content.releasesCount = newReleasesCount;
             fs.writeFileSync(filename, JSON.stringify(content));
         });

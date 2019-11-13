@@ -23,22 +23,43 @@ class Releases
             die("Connection failed: " . mysqli_connect_error());
         }
 
-        $query = "SELECT id, url, title, platform_pc, platform_ps4, platform_xbox, teaser, image, content FROM releases ORDER BY id DESC";
+        $query = "SELECT id, url, title, platform_pc, platform_ps4, platform_xbox, excerpt, image, body FROM releases ORDER BY id DESC";
         $data = mysqli_query($connect, $query);
         $output = array();
         $return_arr = array();
 
         if (mysqli_num_rows($data) > 0) {
             while ($row = mysqli_fetch_assoc($data)) {
-                $output['id'] = $row['id'];
+                $output['id'] = (int) $row['id'];
                 $output['url'] = $row['url'];
                 $output['title'] = $row['title'];
-                $output['platforms']['pc'] = $row['platform_pc'];
-                $output['platforms']['ps4'] = $row['platform_ps4'];
-                $output['platforms']['xbox'] = $row['platform_xbox'];
-                $output['teaser'] = $row['teaser'];
-                $output['image'] = $row['image'];
-                $output['content'] = $row['content'];
+                switch ($row['platform_pc']) {
+                    case '1':
+                        $output['platforms']['pc'] = true;
+                        break;
+                    case '0':
+                        $output['platforms']['pc'] = false;
+                        break;
+                }
+                switch ($row['platform_ps4']) {
+                    case '1':
+                        $output['platforms']['ps4'] = true;
+                        break;
+                    case '0':
+                        $output['platforms']['ps4'] = false;
+                        break;
+                }
+                switch ($row['platform_xbox']) {
+                    case '1':
+                        $output['platforms']['xbox'] = true;
+                        break;
+                    case '0':
+                        $output['platforms']['xbox'] = false;
+                        break;
+                }
+                $output['images']['image_large'] = $row['image'];
+                $output['excerpt'] = $row['excerpt'];
+                $output['body'] = $row['body'];
 
                 array_push($return_arr, $output);
             }
@@ -79,10 +100,10 @@ class Releases
             die("Connection failed: " . mysqli_connect_error());
         }
 
-        $query = "INSERT INTO releases (url, title, platform_pc, platform_ps4, platform_xbox, teaser, image, content) 
+        $query = "INSERT INTO releases (url, title, platform_pc, platform_ps4, platform_xbox, excerpt, image, body) 
 					SELECT d.*
 					FROM (SELECT
-							'" . $item["url"] . "', '" . $item["title"] . "', '" . $item["platforms"]["pc"] . "' AS pc, '" . $item["platforms"]["ps4"] . "' AS ps4, '" . $item["platforms"]["xbox"] . "'AS xbox, '" . $item["teaser"] . "', '" . $item["image"] . "', '" . $item["content"] . "') AS d
+							'" . $item["url"] . "', '" . $item["title"] . "', '" . $item["platforms"]["pc"] . "' AS pc, '" . $item["platforms"]["ps4"] . "' AS ps4, '" . $item["platforms"]["xbox"] . "'AS xbox, '" . $item["excerpt"] . "', '" . $item["image"] . "', '" . $item["body"] . "') AS d
 					WHERE 0 IN (SELECT COUNT(*)
 					FROM releases WHERE url='" . $item["url"] . "' AND title='" . $item["title"] . "')";
         mysqli_query($connect, $query);
@@ -97,7 +118,7 @@ class Releases
             die("Connection failed: " . mysqli_connect_error());
         }
 
-        $query = "UPDATE releases SET url='" . $item["url"] . "', title='" . $item["title"] . "', platform_pc='" . $item["platforms"]["pc"] . "', platform_ps4='" . $item["platforms"]["ps4"] . "', platform_xbox='" . $item["platforms"]["xbox"] . "', teaser='" . $item["teaser"] . "', image='" . $item["image"] . "', content='" . $item["content"] . "' WHERE url='" . $item["url"] . "'";
+        $query = "UPDATE releases SET url='" . $item["url"] . "', title='" . $item["title"] . "', platform_pc='" . $item["platforms"]["pc"] . "', platform_ps4='" . $item["platforms"]["ps4"] . "', platform_xbox='" . $item["platforms"]["xbox"] . "', excerpt='" . $item["excerpt"] . "', image='" . $item["image"] . "', body='" . $item["body"] . "' WHERE url='" . $item["url"] . "'";
         mysqli_query($connect, $query);
         var_dump(mysqli_error_list($connect));
         mysqli_close($connect);

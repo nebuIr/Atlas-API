@@ -23,20 +23,26 @@ class Version
             die("Connection failed: " . mysqli_connect_error());
         }
 
-        $query = "SELECT id, url, version, date FROM version";
+        $query = "SELECT id, url, version, timestamp FROM version";
         $data = mysqli_query($connect, $query);
         $output = array();
+        $return_arr = array();
 
         if (mysqli_num_rows($data) > 0) {
             while ($row = mysqli_fetch_assoc($data)) {
-                $output[]=$row;
+                $output['id'] = (int) $row['id'];
+                $output['url'] = $row['url'];
+                $output['version'] = $row['version'];
+                $output['date'] = $timestamp = date('Y-m-d h:m:s', $row['timestamp']);;
+
+                array_push($return_arr, $output);
             }
         }
 
         mysqli_close($connect);
 
         header('Content-Type: application/json');
-        echo json_encode($output);
+        echo json_encode($return_arr);
     }
 
     public function mainSqlUpdate()
@@ -52,7 +58,8 @@ class Version
         $json = file_get_contents($url);
         $data = json_decode($json, true);
         $table = 'version';
-        if ($result = $connect->query("SELECT COUNT(1) FROM '".$table."'")) {
+        $result = $connect->query("SELECT * FROM ".$table);
+        if ($result->num_rows) {
             if($result->num_rows == 1) {
                 foreach ($data as $item) {
                     $this->querySqlUpdate($item);
@@ -72,7 +79,7 @@ class Version
             die("Connection failed: " . mysqli_connect_error());
         }
 
-        $query = "UPDATE version SET url='" . $item["url"] . "', version='" . $item["version"] . "', date='" . $item["date"] . "' WHERE id='0'";
+        $query = "UPDATE version SET url='" . $item["url"] . "', version='" . $item["version"] . "', timestamp='" . $item["timestamp"] . "' WHERE id='0'";
         mysqli_query($connect, $query);
         var_dump(mysqli_error_list($connect));
         mysqli_close($connect);
@@ -85,7 +92,7 @@ class Version
             die("Connection failed: " . mysqli_connect_error());
         };
 
-        $sql_set = "INSERT INTO version(url, version, date) VALUES('" . $item["url"] . "', '" . $item["version"] . "', '" . $item["date"] . "')";
+        $sql_set = "INSERT INTO version(url, version, date) VALUES('" . $item["url"] . "', '" . $item["version"] . "', '" . $item["timestamp"] . "')";
         mysqli_query($connect, $sql_set);
         var_dump(mysqli_error_list($connect));
         mysqli_close($connect);

@@ -1,13 +1,13 @@
 var methods = {
-send: function(topic, id, url, title, timestamp, date, teaser, image, content) {
+send: function(topic, id, url, title, timestamp, excerpt, image, body) {
         var admin = require("firebase-admin");
 
-        //console.log("===== SEND =====\n===== " + id + "\n===== " + url + "\n===== " + title + "\n===== " + timestamp + "\n===== " + date + "\n===== " + teaser + "\n===== " + image + "\n===== " + content + "\n===== SEND =====");
+        //console.log("===== SEND =====\n===== " + id + "\n===== " + url + "\n===== " + title + "\n===== " + timestamp + "\n===== " + excerpt + "\n===== " + image + "\n===== " + body + "\n===== SEND =====");
 
         var message = {
             notification: {
                 title: title,
-                body: teaser,
+                body: excerpt,
                 image: image
             },
             android: {

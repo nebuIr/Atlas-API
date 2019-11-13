@@ -75,24 +75,24 @@ function initializePosts($url, $category, $post_count, $error_string) {
         } else {
             $item['platforms']['xbox'] = false;
         }
-        $item['teaser'] = $post->find('p', 0)->plaintext;
-        $teaserPattern = array("&#8217;", "&#8211;", "\r\n             Read more", "\r\n          Read more", "&nbsp;", "’", "–", "\xE2\x80\xA6", "&#8230;", "            ", "           ");
-        $teaserReplace = array("’", "-", "", "", "", "\'", "-", "...", "...", "", "");
-        $teaser_replace = str_replace($teaserPattern, $teaserReplace, $item['teaser']);
-        $teaser = preg_replace('/\xc2\xa0/', ' ', $teaser_replace);
-        $item['teaser'] = $teaser;
+        $item['excerpt'] = $post->find('p', 0)->plaintext;
+        $excerptPattern = array("&#8217;", "&#8211;", "\r\n             Read more", "\r\n          Read more", "&nbsp;", "’", "–", "\xE2\x80\xA6", "&#8230;", "            ", "           ");
+        $excerptReplace = array("’", "-", "", "", "", "\'", "-", "...", "...", "", "");
+        $excerpt_replace = str_replace($excerptPattern, $excerptReplace, $item['excerpt']);
+        $excerpt = preg_replace('/\xc2\xa0/', ' ', $excerpt_replace);
+        $item['excerpt'] = $excerpt;
         $item['image'] = $article_html->find('meta[property=og:image]', 0)->content;
-        $item['content'] = $article_html->find('//div[@class="box box--fill-height"]', 0)->innertext;
-        $contentPattern = array("src=\"/wp-content");
-        $contentReplace = array("src=\"https://www.nomanssky.com/wp-content");
-        $content = str_replace($contentPattern, $contentReplace, $item['content']);
-        $contentPattern = array("&#8217;", "&#8211;", "&nbsp;", "’", "–", '\u00a0', "'", "\t", "     ", "href=\"/");
-        $contentReplace = array("\'", "–", "", "\'", "-", "", "\'", "", "", "href=\"https://www.nomanssky.com/");
-        $content = str_replace($contentPattern, $contentReplace, $content);
-        $contentPattern = array("\\\\'");
-        $contentReplace = array("\'");
-        $content = str_replace($contentPattern, $contentReplace, $content);
-        $item['content'] = $content;
+        $item['body'] = $article_html->find('//div[@class="box box--fill-height"]', 0)->innertext;
+        $bodyPattern = array("src=\"/wp-content");
+        $bodyReplace = array("src=\"https://www.nomanssky.com/wp-content");
+        $body = str_replace($bodyPattern, $bodyReplace, $item['body']);
+        $bodyPattern = array("&#8217;", "&#8211;", "&nbsp;", "’", "–", '\u00a0', "'", "\t", "     ", "href=\"/");
+        $bodyReplace = array("\'", "–", "", "\'", "-", "", "\'", "", "", "href=\"https://www.nomanssky.com/");
+        $body = str_replace($bodyPattern, $bodyReplace, $body);
+        $bodyPattern = array("\\\\'");
+        $bodyReplace = array("\'");
+        $body = str_replace($bodyPattern, $bodyReplace, $body);
+        $item['body'] = $body;
         $items[] = $item;
 
         echo "Added post: $title\n";
@@ -149,24 +149,24 @@ function updatePosts($url, $category, $post_count, $error_string) {
     } else {
         $item['platforms']['xbox'] = false;
     }
-    $item['teaser'] = $posts->find('p', 0)->plaintext;
-    $teaserPattern = array("&#8217;", "&#8211;", "\r\n             Read more", "\r\n          Read more", "&nbsp;", "’", "–", "\xE2\x80\xA6", "&#8230;", "            ", "           ");
-    $teaserReplace = array("’", "-", "", "", "", "\'", "-", "...", "...", "", "");
-    $teaser_replace = str_replace($teaserPattern, $teaserReplace, $item['teaser']);
-    $teaser = preg_replace('/\xc2\xa0/', ' ', $teaser_replace);
-    $item['teaser'] = $teaser;
+    $item['excerpt'] = $posts->find('p', 0)->plaintext;
+    $excerptPattern = array("&#8217;", "&#8211;", "\r\n             Read more", "\r\n          Read more", "&nbsp;", "’", "–", "\xE2\x80\xA6", "&#8230;", "            ", "           ");
+    $excerptReplace = array("’", "-", "", "", "", "\'", "-", "...", "...", "", "");
+    $excerpt_replace = str_replace($excerptPattern, $excerptReplace, $item['excerpt']);
+    $excerpt = preg_replace('/\xc2\xa0/', ' ', $excerpt_replace);
+    $item['excerpt'] = $excerpt;
     $item['image'] = $article_html->find('meta[property=og:image]', 0)->content;
-    $item['content'] = $article_html->find('//div[@class="box box--fill-height"]', 0)->innertext;
-    $contentPattern = array("src=\"/wp-content");
-    $contentReplace = array("src=\"https://www.nomanssky.com/wp-content");
-    $content = str_replace($contentPattern, $contentReplace, $item['content']);
-    $contentPattern = array("&#8217;", "&#8211;", "&nbsp;", "’", "–", '\u00a0', "'", "\t", "     ", "href=\"/");
-    $contentReplace = array("\'", "–", "", "\'", "-", "", "\'", "", "", "href=\"https://www.nomanssky.com/");
-    $content = str_replace($contentPattern, $contentReplace, $content);
-    $contentPattern = array("\\\\'");
-    $contentReplace = array("\'");
-    $content = str_replace($contentPattern, $contentReplace, $content);
-    $item['content'] = $content;
+    $item['body'] = $article_html->find('//div[@class="box box--fill-height"]', 0)->innertext;
+    $bodyPattern = array("src=\"/wp-content");
+    $bodyReplace = array("src=\"https://www.nomanssky.com/wp-content");
+    $body = str_replace($bodyPattern, $bodyReplace, $item['body']);
+    $bodyPattern = array("&#8217;", "&#8211;", "&nbsp;", "’", "–", '\u00a0', "'", "\t", "     ", "href=\"/");
+    $bodyReplace = array("\'", "–", "", "\'", "-", "", "\'", "", "", "href=\"https://www.nomanssky.com/");
+    $body = str_replace($bodyPattern, $bodyReplace, $body);
+    $bodyPattern = array("\\\\'");
+    $bodyReplace = array("\'");
+    $body = str_replace($bodyPattern, $bodyReplace, $body);
+    $item['body'] = $body;
     $items[] = $item;
 
     echo "Added post: $title\n";
