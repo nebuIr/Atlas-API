@@ -54,13 +54,12 @@ function getLatestReleases(callback) {
             let releasesId = rows[0].id;
             let releasesUrl = rows[0].url;
             let releasesTitle = rows[0].title;
-            let releasesPlatforms = rows[0].platforms;
             let releasesTimestamp = null;
             let releasesExcerpt = rows[0].excerpt;
             let releasesImage = rows[0].image;
             let releasesBody = rows[0].body;
 
-            return callback(releasesId, releasesUrl, releasesTitle, releasesPlatforms, releasesTimestamp, releasesExcerpt, releasesImage, releasesBody);
+            return callback(releasesId, releasesUrl, releasesTitle, releasesTimestamp, releasesExcerpt, releasesImage, releasesBody);
         });
     });
 }
