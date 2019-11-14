@@ -10,3 +10,6 @@
 /backend/atlas/notifications/release_notification.json
 /backend/atlas/notifications/news_notification.json
 /backend/atlas/notifications/firebase-adminsdk.json
+/public/atlas/v1/news/output.json
+/public/atlas/v1/releases/output.json
+/public/atlas/v1/version/output.json

@@ -45,8 +45,8 @@ class News
 
         mysqli_close($connect);
 
-        header('Content-Type: application/json');
-        echo json_encode($return_arr);
+        $output_file = fopen(__DIR__ . "/output.json", "w") or die("Unable to open file!");
+        fwrite($output_file, json_encode($return_arr));
     }
 
     public function mainSql()
@@ -100,5 +100,7 @@ class News
         mysqli_query($connect, $query);
         var_dump(mysqli_error_list($connect));
         mysqli_close($connect);
+
+        $this->generateJson();
     }
 }

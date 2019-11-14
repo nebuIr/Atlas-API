@@ -41,8 +41,8 @@ class Version
 
         mysqli_close($connect);
 
-        header('Content-Type: application/json');
-        echo json_encode($return_arr);
+        $output_file = fopen(__DIR__ . "/output.json", "w") or die("Unable to open file!");
+        fwrite($output_file, json_encode($return_arr));
     }
 
     public function mainSqlUpdate()
@@ -83,6 +83,8 @@ class Version
         mysqli_query($connect, $query);
         var_dump(mysqli_error_list($connect));
         mysqli_close($connect);
+
+        $this->generateJson();
     }
 
     public function querySqlSet($item)
@@ -96,5 +98,7 @@ class Version
         mysqli_query($connect, $sql_set);
         var_dump(mysqli_error_list($connect));
         mysqli_close($connect);
+
+        $this->generateJson();
     }
 }
