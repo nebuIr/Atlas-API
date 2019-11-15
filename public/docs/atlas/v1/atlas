@@ -88,9 +88,9 @@ components:
         title:
           type: string
           example: title
-        date:
-          type: string
-          format: date-time
+        timestamp:
+          type: integer
+          example: 1573833735
         images:
           $ref: '#/components/schemas/Images'
         excerpt:
@@ -135,9 +135,9 @@ components:
         version:
           type: string
           example: version number
-        date:
-          type: string
-          format: date-time
+        timestamp:
+          type: integer
+          example: 1573833735
     Platforms:
       type: object
       properties:

@@ -33,7 +33,7 @@ class Version
                 $output['id'] = (int) $row['id'];
                 $output['url'] = $row['url'];
                 $output['version'] = $row['version'];
-                $output['date'] = $timestamp = date('Y-m-d h:m:s A', $row['timestamp']);;
+                $output['timestamp'] = $row['timestamp'];
 
                 array_push($return_arr, $output);
             }
