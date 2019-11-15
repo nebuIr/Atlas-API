@@ -33,7 +33,7 @@ class News
                 $output['id'] = (int) $row['id'];
                 $output['url'] = $row['url'];
                 $output['title'] = $row['title'];
-                $output['date'] = $timestamp = date('Y-m-d h:m:s', $row['timestamp']);
+                $output['date'] = $timestamp = date('Y-m-d h:m:s A', $row['timestamp']);
                 $output['images']['image_large'] = $row['image'];
                 $output['images']['image_small'] = $row['image_small'];
                 $output['excerpt'] = $row['excerpt'];
