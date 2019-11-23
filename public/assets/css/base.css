@@ -1,0 +1,40 @@
+/* ===== BODY ===== */
+
+body {
+    background-color: #202225;
+    background-repeat: repeat;
+    background-attachment: scroll, fixed;;
+    font-family: 'Poppins Regular', sans-serif;
+}
+
+
+/* ===== GENERAL ===== */
+
+.title {
+    font-family: 'Poppins Regular', sans-serif;
+    font-size: 6em;
+    margin-top: 80px;
+    margin-bottom: 30px;
+}
+
+.color-white {
+    color: #FFF;
+}
+
+.weight-bold {
+    font-weight: 700;
+}
+
+a:link {
+    color: white;
+}
+
+a:visited {
+    color: white;
+}
+
+.center {
+    text-align: center;
+    align-content: center;
+    align-self: center;
+}

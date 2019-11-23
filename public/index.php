@@ -4,20 +4,15 @@
 
 <head>
     <title>nebulr</title>
-    <?php include($_SERVER['DOCUMENT_ROOT'] . '/public/assets/html/head.php'); ?>
-    <?php $components = new Components(); ?>
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/assets/html/head.php'); ?>
 </head>
 
 <body>
 
 <main class='main-text-medium'>
-    <p align='center' class='title color-white weight-bold'>nebulr</p>
+    <p align='center' class='title color-white weight-bold'>Atlas API</p>
 
-    <div class='grid'>
-        <?php
-        $components->renderProjects();
-        ?>
-    </div>
+    <div class="center"><a href="/docs/atlas/v1">Documentation</a></div>
 </main>
 
 <?php include($_SERVER['DOCUMENT_ROOT'] . '/assets/html/footer.php'); ?>
