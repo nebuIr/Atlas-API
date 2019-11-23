@@ -3,7 +3,7 @@
 <html lang='en'>
 
 <head>
-    <title>nebulr</title>
+    <title>Atlas API</title>
     <?php include($_SERVER['DOCUMENT_ROOT'] . '/assets/html/head.php'); ?>
 </head>
 
