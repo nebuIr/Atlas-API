@@ -82,6 +82,10 @@ function initializePosts($url, $category, $post_count, $error_string) {
         $excerpt = preg_replace('/\xc2\xa0/', ' ', $excerpt_replace);
         $item['excerpt'] = $excerpt;
         $item['image'] = $article_html->find('meta[property=og:image]', 0)->content;
+		$image_large_pattern = array("http://");
+		$image_large_replace = array("https://");
+		$image_large = str_replace($image_large_pattern, $image_large_replace, $item['image']);
+		$item['image'] = $image_large;
         $item['body'] = $article_html->find('//div[@class="box box--fill-height"]', 0)->innertext;
         $bodyPattern = array("src=\"/wp-content");
         $bodyReplace = array("src=\"https://www.nomanssky.com/wp-content");
@@ -156,6 +160,10 @@ function updatePosts($url, $category, $post_count, $error_string) {
     $excerpt = preg_replace('/\xc2\xa0/', ' ', $excerpt_replace);
     $item['excerpt'] = $excerpt;
     $item['image'] = $article_html->find('meta[property=og:image]', 0)->content;
+	$image_large_pattern = array("http://");
+	$image_large_replace = array("https://");
+	$image_large = str_replace($image_large_pattern, $image_large_replace, $item['image']);
+	$item['image'] = $image_large;
     $item['body'] = $article_html->find('//div[@class="box box--fill-height"]', 0)->innertext;
     $bodyPattern = array("src=\"/wp-content");
     $bodyReplace = array("src=\"https://www.nomanssky.com/wp-content");
