@@ -18,7 +18,7 @@ class News
 
     public function generateJson()
     {
-        $connect = mysqli_connect("$this->db_host", "$this->db_user", "$this->db_pass", "$this->db_name");
+        $connect = mysqli_connect($this->db_host, $this->db_user, $this->db_pass, $this->db_name);
         if (!$connect) {
             die("Connection failed: " . mysqli_connect_error());
         }
@@ -73,7 +73,7 @@ class News
 
     public function querySqlSet($item)
     {
-        $connect = mysqli_connect("$this->db_host", "$this->db_user", "$this->db_pass", "$this->db_name");
+        $connect = mysqli_connect($this->db_host, $this->db_user, $this->db_pass, $this->db_name);
         if (!$connect) {
             die("Connection failed: " . mysqli_connect_error());
         }
@@ -91,7 +91,7 @@ class News
 
     public function querySqlUpdate($item)
     {
-        $connect = mysqli_connect("$this->db_host", "$this->db_user", "$this->db_pass", "$this->db_name");
+        $connect = mysqli_connect($this->db_host, $this->db_user, $this->db_pass, $this->db_name);
         if (!$connect) {
             die("Connection failed: " . mysqli_connect_error());
         }

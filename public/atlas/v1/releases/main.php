@@ -4,59 +4,43 @@ use \Dotenv\Dotenv;
 
 class Releases
 {
-    public function __construct() {
+	/**
+	 * @var mysqli
+	 */
+	private $conn;
+
+	public function __construct() {
         require_once __DIR__ . '/../../../../vendor/autoload.php';
 
         $dotenv = Dotenv::create(__DIR__ . '/../../../../');
         $dotenv->load();
 
-        $this->db_host = getenv('DB_HOST');
-        $this->db_name = getenv('DB_NAME');
-        $this->db_user = getenv('DB_USER');
-        $this->db_pass = getenv('DB_PASS');
+        $db_host = getenv('DB_HOST');
+        $db_name = getenv('DB_NAME');
+        $db_user = getenv('DB_USER');
+        $db_pass = getenv('DB_PASS');
+
+		$this->conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+		if (!$this->conn) {
+			die('Connection failed: ' . $this->conn->connect_error);
+		}
     }
 
     public function generateJson()
     {
-        $connect = mysqli_connect("$this->db_host", "$this->db_user", "$this->db_pass", "$this->db_name");
-        if (!$connect) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
-
-        $query = "SELECT id, url, title, platform_pc, platform_ps4, platform_xbox, excerpt, image, body FROM releases ORDER BY id DESC";
-        $data = mysqli_query($connect, $query);
+		$stmt = $this->conn->prepare('SELECT id, url, title, platform_pc, platform_ps4, platform_xbox, excerpt, image, body FROM releases ORDER BY id DESC');
+		$stmt->execute();
         $output = array();
         $return_arr = array();
 
-        if (mysqli_num_rows($data) > 0) {
-            while ($row = mysqli_fetch_assoc($data)) {
+        if ($stmt->num_rows() > 0) {
+            while ($row = $stmt->fetch()) {
                 $output['id'] = (int) $row['id'];
                 $output['url'] = $row['url'];
                 $output['title'] = $row['title'];
-                switch ($row['platform_pc']) {
-                    case '1':
-                        $output['platforms']['pc'] = true;
-                        break;
-                    case '0':
-                        $output['platforms']['pc'] = false;
-                        break;
-                }
-                switch ($row['platform_ps4']) {
-                    case '1':
-                        $output['platforms']['ps4'] = true;
-                        break;
-                    case '0':
-                        $output['platforms']['ps4'] = false;
-                        break;
-                }
-                switch ($row['platform_xbox']) {
-                    case '1':
-                        $output['platforms']['xbox'] = true;
-                        break;
-                    case '0':
-                        $output['platforms']['xbox'] = false;
-                        break;
-                }
+				$output['platforms']['pc'] = (bool) $row['platform_pc'];
+				$output['platforms']['ps4'] = (bool) $row['platform_ps4'];
+				$output['platforms']['xbox'] = (bool) $row['platform_xbox'];
                 $output['images']['image_large'] = $row['image'];
                 $output['excerpt'] = $row['excerpt'];
                 $output['body'] = $row['body'];
@@ -65,9 +49,10 @@ class Releases
             }
         }
 
-        mysqli_close($connect);
+		$stmt->close();
+        $this->conn->close();
 
-        $output_file = fopen(__DIR__ . "/output.json", "w") or die("Unable to open file!");
+        $output_file = fopen(__DIR__ . '/output.json', "w") or die('Unable to open file!');
         fwrite($output_file, json_encode($return_arr));
     }
 
@@ -79,7 +64,7 @@ class Releases
 
     public function getJson()
     {
-        $url = __DIR__ . "/../../../../backend/atlas/v1/releases/posts.json";
+        $url = __DIR__ . '/../../../../backend/atlas/v1/releases/posts.json';
         $json = file_get_contents($url);
         $data = json_decode($json, true);
         foreach ($data as $item) {
@@ -95,33 +80,26 @@ class Releases
 
     public function querySqlSet($item)
     {
-        $connect = mysqli_connect("$this->db_host", "$this->db_user", "$this->db_pass", "$this->db_name");
-        if (!$connect) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
+    	$pc = (int)$item['platforms']['pc'];
+    	$ps4 = (int)$item['platforms']['ps4'];
+    	$xbox = (int)$item['platforms']['xbox'];
 
-        $query = "INSERT INTO releases (url, title, platform_pc, platform_ps4, platform_xbox, excerpt, image, body) 
-					SELECT d.*
-					FROM (SELECT
-							'" . $item["url"] . "', '" . $item["title"] . "', '" . $item["platforms"]["pc"] . "' AS pc, '" . $item["platforms"]["ps4"] . "' AS ps4, '" . $item["platforms"]["xbox"] . "'AS xbox, '" . $item["excerpt"] . "', '" . $item["image"] . "', '" . $item["body"] . "') AS d
-					WHERE 0 IN (SELECT COUNT(*)
-					FROM releases WHERE url='" . $item["url"] . "' AND title='" . $item["title"] . "')";
-        mysqli_query($connect, $query);
-        var_dump(mysqli_error_list($connect));
-        mysqli_close($connect);
+		$stmt = $this->conn->prepare('INSERT INTO releases ("id", "url", "title", "platform_pc", "platform_ps4", "platform_xbox", "excerpt", "image", "body") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+		$stmt->bind_param('issiiisss', $item['id'], $item['url'], $item['title'], $pc, $ps4, $xbox, $item['excerpt'], $item['image'], $item['body']);
+		$stmt->execute();
+        var_dump($this->conn->connect_error);
     }
 
     public function querySqlUpdate($item)
     {
-        $connect = mysqli_connect("$this->db_host", "$this->db_user", "$this->db_pass", "$this->db_name");
-        if (!$connect) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
+		$pc = (int)$item['platforms']['pc'];
+		$ps4 = (int)$item['platforms']['ps4'];
+		$xbox = (int)$item['platforms']['xbox'];
 
-        $query = "UPDATE releases SET url='" . $item["url"] . "', title='" . $item["title"] . "', platform_pc='" . $item["platforms"]["pc"] . "', platform_ps4='" . $item["platforms"]["ps4"] . "', platform_xbox='" . $item["platforms"]["xbox"] . "', excerpt='" . $item["excerpt"] . "', image='" . $item["image"] . "', body='" . $item["body"] . "' WHERE url='" . $item["url"] . "'";
-        mysqli_query($connect, $query);
-        var_dump(mysqli_error_list($connect));
-        mysqli_close($connect);
+		$stmt = $this->conn->prepare('UPDATE releases SET url=?, title=?, platform_pc=?, platform_ps4=?, platform_xbox=?, excerpt=?, image=?, body=? WHERE id=?');
+		$stmt->bind_param('ssiiisssi', $item['url'], $item['title'], $pc, $ps4, $xbox, $item['excerpt'], $item['image'], $item['body'], $item['id']);
+		$stmt->execute();
+		var_dump($this->conn->connect_error);
 
         $this->generateJson();
     }
