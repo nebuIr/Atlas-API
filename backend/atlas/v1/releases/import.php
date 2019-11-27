@@ -17,7 +17,7 @@ $error_string = 'error';
 $latest_post_title = checkLatestPost($url, $category);
 
 if (trim($latest_post_title) !== trim($latest_post['title'])) {
-    if (filesize('posts.json') === 0) {
+    if (!file_exists('posts.json')) {
         initializePosts($url, $category, $post_count, $error_string);
     } else {
         updatePosts($url, $category, $post_count, $error_string);
