@@ -4,32 +4,38 @@ use \Dotenv\Dotenv;
 
 class News
 {
-    public function __construct() {
+	/**
+	 * @var mysqli
+	 */
+	private $conn;
+
+	public function __construct() {
         require_once __DIR__ . '/../../../../vendor/autoload.php';
 
         $dotenv = Dotenv::create(__DIR__ . '/../../../../');
         $dotenv->load();
 
-        $this->db_host = getenv('DB_HOST');
-        $this->db_name = getenv('DB_NAME');
-        $this->db_user = getenv('DB_USER');
-        $this->db_pass = getenv('DB_PASS');
+        $db_host = getenv('DB_HOST');
+        $db_name = getenv('DB_NAME');
+        $db_user = getenv('DB_USER');
+        $db_pass = getenv('DB_PASS');
+
+		$this->conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+		if (!$this->conn) {
+			die('Connection failed: ' . $this->conn->connect_error);
+		}
     }
 
     public function generateJson()
     {
-        $connect = mysqli_connect($this->db_host, $this->db_user, $this->db_pass, $this->db_name);
-        if (!$connect) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
+		$stmt = $this->conn->prepare('SELECT id, url, title, timestamp, excerpt, image, image_small, body FROM news ORDER BY id DESC');
+		$stmt->execute();
 
-        $query = "SELECT id, url, title, timestamp, excerpt, image, image_small, body FROM news ORDER BY id DESC";
-        $data = mysqli_query($connect, $query);
         $output = array();
         $return_arr = array();
 
-        if (mysqli_num_rows($data) > 0) {
-            while ($row = mysqli_fetch_assoc($data)) {
+		if ($stmt->num_rows() > 0) {
+			while ($row = $stmt->fetch()) {
                 $output['id'] = (int) $row['id'];
                 $output['url'] = $row['url'];
                 $output['title'] = $row['title'];
@@ -39,13 +45,11 @@ class News
                 $output['excerpt'] = $row['excerpt'];
                 $output['body'] = $row['body'];
 
-                array_push($return_arr, $output);
+                $return_arr[] = $output;
             }
         }
 
-        mysqli_close($connect);
-
-        $output_file = fopen(__DIR__ . "/output.json", "w") or die("Unable to open file!");
+        $output_file = fopen(__DIR__ . '/output.json', 'wb') or die('Unable to open file!');
         fwrite($output_file, json_encode($return_arr));
     }
 
@@ -57,7 +61,7 @@ class News
 
     public function getJson()
     {
-        $url = __DIR__ . "/../../../../backend/atlas/v1/news/posts.json";
+        $url = __DIR__ . '/../../../../backend/atlas/v1/news/posts.json';
         $json = file_get_contents($url);
         $data = json_decode($json, true);
         foreach ($data as $item) {
@@ -73,33 +77,16 @@ class News
 
     public function querySqlSet($item)
     {
-        $connect = mysqli_connect($this->db_host, $this->db_user, $this->db_pass, $this->db_name);
-        if (!$connect) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
-
-        $query = "INSERT INTO news (url, title, timestamp, excerpt, image, image_small, body) 
-					SELECT d.*
-					FROM (SELECT
-							'" . $item["url"] . "', '" . $item["title"] . "', '" . $item["timestamp"] . "', '" . $item["excerpt"] . "', '" . $item["image"] . "', '" . $item["image_small"] . "' AS img_small, '" . $item["body"] . "') AS d
-					WHERE 0 IN (SELECT COUNT(*)
-					FROM news WHERE url='" . $item["url"] . "' AND title='" . $item["title"] . "')";
-        mysqli_query($connect, $query);
-        var_dump(mysqli_error_list($connect));
-        mysqli_close($connect);
+		$stmt = $this->conn->prepare('INSERT INTO news (id, url, title, timestamp, excerpt, image, image_small, body) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+		$stmt->bind_param('ississss', $item['id'], $item['url'], $item['title'], $item["timestamp"], $item['excerpt'], $item['image'], $item['image_small'], $item['body']);
+		$stmt->execute();
     }
 
     public function querySqlUpdate($item)
     {
-        $connect = mysqli_connect($this->db_host, $this->db_user, $this->db_pass, $this->db_name);
-        if (!$connect) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
-
-        $query = "UPDATE news SET url='" . $item["url"] . "', title='" . $item["title"] . "', excerpt='" . $item["excerpt"] . "', image='" . $item["image"] . "', image_small='" . $item["image_small"] . "', body='" . $item["body"] . "' WHERE timestamp='" . $item["timestamp"] . "'";
-        mysqli_query($connect, $query);
-        var_dump(mysqli_error_list($connect));
-        mysqli_close($connect);
+		$stmt = $this->conn->prepare('UPDATE news SET url=?, title=?, excerpt=?, image=?, image_small=?, body=? WHERE id=?');
+		$stmt->bind_param('ssssssi', $item['url'], $item['title'], $item['excerpt'], $item['image'], $item['image_small'], $item['body'], $item['id']);
+		$stmt->execute();
 
         $this->generateJson();
     }

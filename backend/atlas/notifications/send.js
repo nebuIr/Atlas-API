@@ -1,10 +1,10 @@
-var methods = {
-send: function(topic, id, url, title, timestamp, excerpt, image, body) {
-        var admin = require("firebase-admin");
+let methods = {
+    send: function(topic, id, url, title, timestamp, excerpt, image, body) {
+        let admin = require("firebase-admin");
 
         //console.log("===== SEND =====\n===== " + id + "\n===== " + url + "\n===== " + title + "\n===== " + timestamp + "\n===== " + excerpt + "\n===== " + image + "\n===== " + body + "\n===== SEND =====");
 
-        var message = {
+        let message = {
             notification: {
                 title: title,
                 body: excerpt,
@@ -22,7 +22,7 @@ send: function(topic, id, url, title, timestamp, excerpt, image, body) {
             topic: topic.toLowerCase()
         };
 
-        var options = {
+        let options = {
             priority: "normal",
             timeToLive: 60 * 60 * 24
         };

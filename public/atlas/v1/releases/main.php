@@ -30,6 +30,7 @@ class Releases
     {
 		$stmt = $this->conn->prepare('SELECT id, url, title, platform_pc, platform_ps4, platform_xbox, excerpt, image, body FROM releases ORDER BY id DESC');
 		$stmt->execute();
+
         $output = array();
         $return_arr = array();
 
@@ -45,14 +46,11 @@ class Releases
                 $output['excerpt'] = $row['excerpt'];
                 $output['body'] = $row['body'];
 
-                array_push($return_arr, $output);
+                $return_arr[] = $output;
             }
         }
 
-		$stmt->close();
-        $this->conn->close();
-
-        $output_file = fopen(__DIR__ . '/output.json', "w") or die('Unable to open file!');
+        $output_file = fopen(__DIR__ . '/output.json', 'wb') or die('Unable to open file!');
         fwrite($output_file, json_encode($return_arr));
     }
 
@@ -84,10 +82,9 @@ class Releases
     	$ps4 = (int)$item['platforms']['ps4'];
     	$xbox = (int)$item['platforms']['xbox'];
 
-		$stmt = $this->conn->prepare('INSERT INTO releases ("id", "url", "title", "platform_pc", "platform_ps4", "platform_xbox", "excerpt", "image", "body") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+		$stmt = $this->conn->prepare('INSERT INTO releases (id, url, title, platform_pc, platform_ps4, platform_xbox, excerpt, image, body) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
 		$stmt->bind_param('issiiisss', $item['id'], $item['url'], $item['title'], $pc, $ps4, $xbox, $item['excerpt'], $item['image'], $item['body']);
 		$stmt->execute();
-        var_dump($this->conn->connect_error);
     }
 
     public function querySqlUpdate($item)
@@ -99,7 +96,6 @@ class Releases
 		$stmt = $this->conn->prepare('UPDATE releases SET url=?, title=?, platform_pc=?, platform_ps4=?, platform_xbox=?, excerpt=?, image=?, body=? WHERE id=?');
 		$stmt->bind_param('ssiiisssi', $item['url'], $item['title'], $pc, $ps4, $xbox, $item['excerpt'], $item['image'], $item['body'], $item['id']);
 		$stmt->execute();
-		var_dump($this->conn->connect_error);
 
         $this->generateJson();
     }

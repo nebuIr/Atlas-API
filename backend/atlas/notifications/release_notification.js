@@ -16,7 +16,7 @@ const pool = mysql.createPool({
     database: process.env.DB_NAME
 });
 
-var methods = {
+let methods = {
     run: function () {
         main();
     }
@@ -69,7 +69,7 @@ function checkCount(newReleasesCount) {
         //console.log("oldReleasesCount: " + oldReleasesCount + " < newReleasesCount: " + newReleasesCount + " = " + true);
         getLatestReleases(function(releasesId, releasesUrl, releasesTitle, releasesTimestamp, releasesExcerpt, releasesImage, releasesBody){
             //console.log("===== RESULT LATEST NEWS =====\n===== " + releasesId + "\n===== " + releasesUrl + "\n===== " + releasesTitle + "\n===== " + releasesTimestamp + "\n===== " + releasesExcerpt + "\n===== " + releasesImage + "\n===== " + releasesBody + "\n===== RESULT LATEST NEWS =====");
-            var releases = "Releases";
+            let releases = "Releases";
             send.data.send(releases, releasesId, releasesUrl, releasesTitle, releasesTimestamp, releasesExcerpt, releasesImage, releasesBody);
             content.releasesCount = newReleasesCount;
             fs.writeFileSync(filename, JSON.stringify(content));

@@ -1,9 +1,9 @@
 <?php
-if (php_sapi_name() != 'cli') {
-    throw new Exception('This application must be run on the command line.');
+if (PHP_SAPI !== 'cli') {
+    throw new \RuntimeException('This application must be run on the command line.');
 }
 
-require __DIR__ . "/../../../lib/simple_html_dom.php";
+require __DIR__ . '/../../../lib/simple_html_dom.php';
 header('Content-Type: application/json');
 
 $items = array();
@@ -25,10 +25,10 @@ function updatePosts($url) {
     }
     $item['version'] = $posts->find('a', 0)->plaintext;
     $item['timestamp'] = $posts->plaintext;
-    $timestamp = explode("(",$item['timestamp']);
+    $timestamp = explode('(',$item['timestamp']);
     $item['timestamp'] = $timestamp[1];
-    $timestampPattern = array(")");
-    $timestampReplace = array("");
+    $timestampPattern = array(')');
+    $timestampReplace = array('');
     $timestamp = str_replace($timestampPattern, $timestampReplace, $item['timestamp']);
     $timestamp = strtotime($timestamp);
     $item['timestamp'] = $timestamp;
@@ -36,7 +36,7 @@ function updatePosts($url) {
 
     echo 'Updated version: ' . $item['version'] . "\n";
 
-    $export = fopen("posts.json", "w") or die("Unable to open file!");
+    $export = fopen('posts.json', 'wb') or die('Unable to open file!');
     fwrite($export, json_encode($items));
 
     handler();
@@ -45,7 +45,7 @@ function updatePosts($url) {
 }
 
 function handler() {
-    include_once(__DIR__ . "/../../../../public/atlas/v1/version/main.php");
+    include_once(__DIR__ . '/../../../../public/atlas/v1/version/main.php');
     $Version = new Version();
     $Version->mainSqlUpdate();
 }

@@ -4,44 +4,48 @@ use \Dotenv\Dotenv;
 
 class Version
 {
-    public function __construct() {
+	/**
+	 * @var mysqli
+	 */
+	private $conn;
+
+	public function __construct() {
         require_once __DIR__ . '/../../../../vendor/autoload.php';
 
         $dotenv = Dotenv::create(__DIR__ . '/../../../../');
         $dotenv->load();
 
-        $this->db_host = getenv('DB_HOST');
-        $this->db_name = getenv('DB_NAME');
-        $this->db_user = getenv('DB_USER');
-        $this->db_pass = getenv('DB_PASS');
+        $db_host = getenv('DB_HOST');
+        $db_name = getenv('DB_NAME');
+        $db_user = getenv('DB_USER');
+        $db_pass = getenv('DB_PASS');
+
+		$this->conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+		if (!$this->conn) {
+			die('Connection failed: ' . $this->conn->connect_error);
+		}
     }
 
     public function generateJson()
     {
-        $connect = mysqli_connect($this->db_host, $this->db_user, $this->db_pass, $this->db_name);
-        if (!$connect) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
+		$stmt = $this->conn->prepare('SELECT id, url, version, timestamp FROM version');
+		$stmt->execute();
 
-        $query = "SELECT id, url, version, timestamp FROM version";
-        $data = mysqli_query($connect, $query);
         $output = array();
         $return_arr = array();
 
-        if (mysqli_num_rows($data) > 0) {
-            while ($row = mysqli_fetch_assoc($data)) {
+        if ($stmt->num_rows() > 0) {
+            while ($row = $stmt->fetch()) {
                 $output['id'] = (int) $row['id'];
                 $output['url'] = $row['url'];
                 $output['version'] = $row['version'];
                 $output['timestamp'] = $row['timestamp'];
 
-                array_push($return_arr, $output);
+                $return_arr[] = $output;
             }
         }
 
-        mysqli_close($connect);
-
-        $output_file = fopen(__DIR__ . "/output.json", "w") or die("Unable to open file!");
+        $output_file = fopen(__DIR__ . '/output.json', 'wb') or die('Unable to open file!');
         fwrite($output_file, json_encode($return_arr));
     }
 
@@ -53,14 +57,19 @@ class Version
 
     public function getJsonAllUpdate()
     {
-        $connect = mysqli_connect($this->db_host, $this->db_user, $this->db_pass, $this->db_name);
-        $url = __DIR__ . "/../../../../backend/atlas/v1/version/posts.json";
-        $json = file_get_contents($url);
-        $data = json_decode($json, true);
-        $table = 'version';
-        $result = $connect->query("SELECT * FROM ".$table);
-        if ($result->num_rows) {
-            if($result->num_rows == 1) {
+		$url = __DIR__ . '/../../../../backend/atlas/v1/version/posts.json';
+		$json = file_get_contents($url);
+		$data = json_decode($json, true);
+
+		$stmt = $this->conn->prepare('SELECT * FROM version');
+		$stmt->execute();
+
+		$row_count = $stmt->num_rows();
+
+		$stmt->close();
+
+        if ($row_count) {
+            if($row_count === 1) {
                 foreach ($data as $item) {
                     $this->querySqlUpdate($item);
                 }
@@ -74,30 +83,25 @@ class Version
 
     public function querySqlUpdate($item)
     {
-        $connect = mysqli_connect($this->db_host, $this->db_user, $this->db_pass, $this->db_name);
-        if (!$connect) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
-
-        $query = "UPDATE version SET url='" . $item["url"] . "', version='" . $item["version"] . "', timestamp='" . $item["timestamp"] . "' WHERE id='0'";
-        mysqli_query($connect, $query);
-        var_dump(mysqli_error_list($connect));
-        mysqli_close($connect);
+		$stmt = $this->conn->prepare('UPDATE version SET url=?, version=?, timestamp=? WHERE id=0');
+		$stmt->bind_param('ssi', $item['url'], $item['version'], $item['timestamp']);
+		$stmt->execute();
 
         $this->generateJson();
     }
 
     public function querySqlSet($item)
     {
-        $connect = mysqli_connect($this->db_host, $this->db_user, $this->db_pass, $this->db_name);
-        if (!$connect) {
-            die("Connection failed: " . mysqli_connect_error());
-        };
-
-        $sql_set = "INSERT INTO version(url, version, timestamp) VALUES('" . $item["url"] . "', '" . $item["version"] . "', '" . $item["timestamp"] . "')";
-        mysqli_query($connect, $sql_set);
-        var_dump(mysqli_error_list($connect));
-        mysqli_close($connect);
+		$stmt = $this->conn->prepare('INSERT INTO version (url, version, timestamp) VALUES (?, ?, ?)');
+		if ($stmt !== FALSE)
+		{
+			$stmt->bind_param('ssi', $item['url'], $item['version'], $item['timestamp']);
+			$stmt->execute();
+		}
+		else
+		{
+			die('prepare() failed: ' . htmlspecialchars($this->conn->error));
+		}
 
         $this->generateJson();
     }
