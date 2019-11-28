@@ -23,7 +23,7 @@ let methods = {
 };
 
 function main() {
-    getNewCount(function(result){
+    getNewCount(function (result) {
         newNewsCount = result;
         //console.log("Variable newNewsCount result: " + newNewsCount);
         checkCount(newNewsCount)
@@ -33,9 +33,11 @@ function main() {
 function getNewCount(callback) {
     pool.getConnection(function (err, connection) {
         const sqlCount = "SELECT COUNT(*) AS newsCount FROM news";
-        connection.query(sqlCount, function(err, rows, fields){
+        connection.query(sqlCount, function (err, rows, fields) {
             connection.release();
-            if (err){throw err;}
+            if (err) {
+                throw err;
+            }
             //console.log("SQL newNewsCount result: " + rows[0].newsCount); // good
             newNewsCount = rows[0].newsCount;  // Scope is larger than function
 
@@ -67,7 +69,7 @@ function getLatestNews(callback) {
 function checkCount(newNewsCount) {
     if (oldNewsCount < newNewsCount) {
         //console.log("oldNewsCount: " + oldNewsCount + " < newNewsCount: " + newNewsCount + " = " + true);
-        getLatestNews(function(newsId, newsUrl, newsTitle, newsTimestamp, newsExcerpt, newsImage, newsBody){
+        getLatestNews(function (newsId, newsUrl, newsTitle, newsTimestamp, newsExcerpt, newsImage, newsBody) {
             //console.log("===== RESULT LATEST NEWS =====\n===== " + newsId + "\n===== " + newsUrl + "\n===== " + newsTitle + "\n===== " + newsTimestamp + "\n===== " + newsExcerpt + "\n===== " + newsImage + "\n===== " + newsBody + "\n===== RESULT LATEST NEWS =====");
             let news = "News";
             send.data.send(news, newsId, newsUrl, newsTitle, newsTimestamp, newsExcerpt, newsImage, newsBody);

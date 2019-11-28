@@ -1,5 +1,5 @@
 let methods = {
-    send: function(topic, id, url, title, timestamp, excerpt, image, body) {
+    send: function (topic, id, url, title, timestamp, excerpt, image, body) {
         let admin = require("firebase-admin");
 
         //console.log("===== SEND =====\n===== " + id + "\n===== " + url + "\n===== " + title + "\n===== " + timestamp + "\n===== " + excerpt + "\n===== " + image + "\n===== " + body + "\n===== SEND =====");

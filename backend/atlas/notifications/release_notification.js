@@ -23,7 +23,7 @@ let methods = {
 };
 
 function main() {
-    getNewCount(function(result){
+    getNewCount(function (result) {
         newReleasesCount = result;
         //console.log("Variable newReleasesCount result: " + newReleasesCount);
         checkCount(newReleasesCount)
@@ -33,9 +33,11 @@ function main() {
 function getNewCount(callback) {
     pool.getConnection(function (err, connection) {
         const sqlCount = "SELECT COUNT(*) AS releasesCount FROM releases";
-        connection.query(sqlCount, function(err, rows, fields){
+        connection.query(sqlCount, function (err, rows, fields) {
             connection.release();
-            if (err){throw err;}
+            if (err) {
+                throw err;
+            }
             //console.log("SQL newReleasesCount result: " + rows[0].releasesCount); // good
             newReleasesCount = rows[0].releasesCount;  // Scope is larger than function
 
@@ -67,7 +69,7 @@ function getLatestReleases(callback) {
 function checkCount(newReleasesCount) {
     if (oldReleasesCount < newReleasesCount) {
         //console.log("oldReleasesCount: " + oldReleasesCount + " < newReleasesCount: " + newReleasesCount + " = " + true);
-        getLatestReleases(function(releasesId, releasesUrl, releasesTitle, releasesTimestamp, releasesExcerpt, releasesImage, releasesBody){
+        getLatestReleases(function (releasesId, releasesUrl, releasesTitle, releasesTimestamp, releasesExcerpt, releasesImage, releasesBody) {
             //console.log("===== RESULT LATEST NEWS =====\n===== " + releasesId + "\n===== " + releasesUrl + "\n===== " + releasesTitle + "\n===== " + releasesTimestamp + "\n===== " + releasesExcerpt + "\n===== " + releasesImage + "\n===== " + releasesBody + "\n===== RESULT LATEST NEWS =====");
             let releases = "Releases";
             send.data.send(releases, releasesId, releasesUrl, releasesTitle, releasesTimestamp, releasesExcerpt, releasesImage, releasesBody);

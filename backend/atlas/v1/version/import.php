@@ -11,7 +11,8 @@ $url = 'https://nomanssky.gamepedia.com/';
 
 updatePosts($url);
 
-function updatePosts($url) {
+function updatePosts($url)
+{
     echo "\n\n----- Import started! -----\n\n\n";
     $html = file_get_html($url);
     $posts = $html->find('div.fplink', 0);
@@ -25,7 +26,7 @@ function updatePosts($url) {
     }
     $item['version'] = $posts->find('a', 0)->plaintext;
     $item['timestamp'] = $posts->plaintext;
-    $timestamp = explode('(',$item['timestamp']);
+    $timestamp = explode('(', $item['timestamp']);
     $item['timestamp'] = $timestamp[1];
     $timestampPattern = array(')');
     $timestampReplace = array('');
@@ -44,7 +45,8 @@ function updatePosts($url) {
     echo "\n\n----- Import successful! -----\n\n";
 }
 
-function handler() {
+function handler()
+{
     include_once(__DIR__ . '/../../../../public/atlas/v1/version/main.php');
     $Version = new Version();
     $Version->mainSqlUpdate();
