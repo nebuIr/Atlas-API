@@ -41,7 +41,7 @@ function initializePosts($url, $category, $post_count, $error_string)
     $html = file_get_html($url . $category);
     $posts = $html->find('div.grid__cell');
 
-    echo "Started import of releases\n";
+    echo "Starting import of releases...\n";
 
     foreach ($posts as $post) {
         $item['url'] = $post->find('a', 0)->href;
@@ -101,17 +101,19 @@ function initializePosts($url, $category, $post_count, $error_string)
         $item['body'] = $body;
         $items[] = $item;
 
-        echo "Added post: $title\n";
+        echo "Post added: $title\n";
         $post_count++;
     }
 
+    $output_items = [];
+    $item_count = $post_count;
     foreach ($items as $item) {
-        --$post_count;
-        $item = ['id' => $post_count] + $item;
+        --$item_count;
+        $item = ['id' => $item_count] + $item;
         $output_items[] = $item;
     }
 
-    echo "Completed import of releases\n\n";
+    echo "Completed import of releases!\n\n";
     $export = fopen('posts.json', 'wb') or die('Unable to open file!');
     fwrite($export, json_encode($output_items));
 
@@ -192,7 +194,7 @@ function updatePosts($url, $category, $post_count, $error_string)
     $item['body'] = $body;
     $items[] = $item;
 
-    echo "Added post: $title\n";
+    echo "Post added: $title\n";
 
     $export_content = file_get_contents('posts.json');
     $export = fopen('posts.json', 'wb') or die('Unable to open file!');
@@ -211,7 +213,7 @@ function updatePosts($url, $category, $post_count, $error_string)
 
 function handler()
 {
-    include_once(__DIR__ . '/../../../../public/atlas/v1/releases/main.php');
+    include_once(__DIR__ . '/main.php');
     $Releases = new Releases();
     $Releases->mainSql();
 }

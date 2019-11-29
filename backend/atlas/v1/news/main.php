@@ -32,12 +32,14 @@ class News
         $stmt = $this->conn->prepare('SELECT id, url, title, timestamp, excerpt, image, image_small, body FROM news ORDER BY id DESC');
         $stmt->execute();
 
-        $output = array();
-        $return_arr = array();
+        $output = [];
+        $return_arr = [];
 
-        if ($stmt->num_rows() > 0) {
-            while ($row = $stmt->fetch()) {
-                $output['id'] = (int)$row['id'];
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $output['id'] = (int) $row['id'];
                 $output['url'] = $row['url'];
                 $output['title'] = $row['title'];
                 $output['timestamp'] = $row['timestamp'];
@@ -50,7 +52,7 @@ class News
             }
         }
 
-        $output_file = fopen(__DIR__ . '/output.json', 'wb') or die('Unable to open file!');
+        $output_file = fopen(__DIR__ . '/../../../../public/atlas/v1/news/output.json', 'wb') or die('Unable to open file!');
         fwrite($output_file, json_encode($return_arr));
     }
 
@@ -62,7 +64,7 @@ class News
 
     public function getJson()
     {
-        $url = __DIR__ . '/../../../../backend/atlas/v1/news/posts.json';
+        $url = __DIR__ . '/posts.json';
         $json = file_get_contents($url);
         $data = json_decode($json, true);
         foreach ($data as $item) {

@@ -35,9 +35,11 @@ class Releases
         $output = array();
         $return_arr = array();
 
-        if ($stmt->num_rows() > 0) {
-            while ($row = $stmt->fetch()) {
-                $output['id'] = (int)$row['id'];
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $output['id'] = (int) $row['id'];
                 $output['url'] = $row['url'];
                 $output['title'] = $row['title'];
                 $output['platforms']['pc'] = (bool)$row['platform_pc'];
@@ -51,7 +53,7 @@ class Releases
             }
         }
 
-        $output_file = fopen(__DIR__ . '/output.json', 'wb') or die('Unable to open file!');
+        $output_file = fopen(__DIR__ . '/../../../../public/atlas/v1/releases/output.json', 'wb') or die('Unable to open file!');
         fwrite($output_file, json_encode($return_arr));
     }
 
@@ -63,7 +65,7 @@ class Releases
 
     public function getJson()
     {
-        $url = __DIR__ . '/../../../../backend/atlas/v1/releases/posts.json';
+        $url = __DIR__ . '/posts.json';
         $json = file_get_contents($url);
         $data = json_decode($json, true);
         foreach ($data as $item) {
@@ -79,9 +81,9 @@ class Releases
 
     public function querySqlSet($item)
     {
-        $pc = (int)$item['platforms']['pc'];
-        $ps4 = (int)$item['platforms']['ps4'];
-        $xbox = (int)$item['platforms']['xbox'];
+        $pc = (int) $item['platforms']['pc'];
+        $ps4 = (int) $item['platforms']['ps4'];
+        $xbox = (int) $item['platforms']['xbox'];
 
         $stmt = $this->conn->prepare('INSERT INTO releases (id, url, title, platform_pc, platform_ps4, platform_xbox, excerpt, image, body) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
         $stmt->bind_param('issiiisss', $item['id'], $item['url'], $item['title'], $pc, $ps4, $xbox, $item['excerpt'], $item['image'], $item['body']);
@@ -90,9 +92,9 @@ class Releases
 
     public function querySqlUpdate($item)
     {
-        $pc = (int)$item['platforms']['pc'];
-        $ps4 = (int)$item['platforms']['ps4'];
-        $xbox = (int)$item['platforms']['xbox'];
+        $pc = (int) $item['platforms']['pc'];
+        $ps4 = (int) $item['platforms']['ps4'];
+        $xbox = (int) $item['platforms']['xbox'];
 
         $stmt = $this->conn->prepare('UPDATE releases SET url=?, title=?, platform_pc=?, platform_ps4=?, platform_xbox=?, excerpt=?, image=?, body=? WHERE id=?');
         $stmt->bind_param('ssiiisssi', $item['url'], $item['title'], $pc, $ps4, $xbox, $item['excerpt'], $item['image'], $item['body'], $item['id']);

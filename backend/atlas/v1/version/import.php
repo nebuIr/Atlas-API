@@ -47,7 +47,7 @@ function updatePosts($url)
 
 function handler()
 {
-    include_once(__DIR__ . '/../../../../public/atlas/v1/version/main.php');
+    include_once(__DIR__ . '/main.php');
     $Version = new Version();
     $Version->mainSqlUpdate();
 }

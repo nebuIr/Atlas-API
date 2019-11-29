@@ -51,7 +51,7 @@ function initializePosts($url, $category, $page, $post_count, $error_string)
             $html = file_get_html($url . $category . '/page/' . $page);
             $posts = $html->find('article');
 
-            echo "Started import of page $page\n";
+            echo "Starting import of page $page ...\n";
 
             foreach ($posts as $post) {
                 $item['url'] = $post->find('a', 0)->href;
@@ -93,16 +93,18 @@ function initializePosts($url, $category, $page, $post_count, $error_string)
                 $item['body'] = $body;
                 $items[] = $item;
 
-                echo "Added post: $title\n";
+                echo "Post added: $title\n";
                 $post_count++;
             }
-            echo "Completed import of page $page\n\n";
+            echo "Completed import of page $page!\n\n";
             $page++;
         } catch (Exception $e) {
 
+            $output_items = [];
+            $item_count = $post_count;
             foreach ($items as $item) {
-                --$post_count;
-                $item = ['id' => $post_count] + $item;
+                --$item_count;
+                $item = ['id' => $item_count] + $item;
                 $output_items[] = $item;
             }
 
@@ -110,7 +112,7 @@ function initializePosts($url, $category, $page, $post_count, $error_string)
             fwrite($export, json_encode($output_items));
 
             $latest_post = fopen('latest.json', 'wb') or die('Unable to open file!');
-            fwrite($latest_post, json_encode($items[0]));
+            fwrite($latest_post, json_encode($output_items[0]));
 
             handler();
 
@@ -175,7 +177,7 @@ function updatePosts($url, $category, $page, $post_count, $error_string)
     $item['body'] = $body;
     $items[] = $item;
 
-    echo "Added post: $title\n";
+    echo "Post added: $title\n";
 
     $export_content = file_get_contents('posts.json');
     $export = fopen('posts.json', 'wb') or die('Unable to open file!');
@@ -194,7 +196,7 @@ function updatePosts($url, $category, $page, $post_count, $error_string)
 
 function handler()
 {
-    include_once(__DIR__ . '/../../../../public/atlas/v1/news/main.php');
+    include_once(__DIR__ . '/main.php');
     $News = new News;
     $News->mainSql();
 }

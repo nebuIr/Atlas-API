@@ -35,8 +35,10 @@ class Version
         $output = array();
         $return_arr = array();
 
-        if ($stmt->num_rows() > 0) {
-            while ($row = $stmt->fetch()) {
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
                 $output['id'] = (int)$row['id'];
                 $output['url'] = $row['url'];
                 $output['version'] = $row['version'];
@@ -46,7 +48,7 @@ class Version
             }
         }
 
-        $output_file = fopen(__DIR__ . '/output.json', 'wb') or die('Unable to open file!');
+        $output_file = fopen(__DIR__ . '/../../../../public/atlas/v1/version/output.json', 'wb') or die('Unable to open file!');
         fwrite($output_file, json_encode($return_arr));
     }
 
@@ -58,7 +60,7 @@ class Version
 
     public function getJsonAllUpdate()
     {
-        $url = __DIR__ . '/../../../../backend/atlas/v1/version/posts.json';
+        $url = __DIR__ . '/posts.json';
         $json = file_get_contents($url);
         $data = json_decode($json, true);
 
