@@ -27,15 +27,14 @@ class Version
         }
     }
 
-    public function generateJson()
+    public function generateJSONFromSQL()
     {
         $stmt = $this->conn->prepare('SELECT id, url, version, timestamp FROM version');
         $stmt->execute();
+        $result = $stmt->get_result();
 
         $output = array();
         $return_arr = array();
-
-        $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -48,61 +47,63 @@ class Version
             }
         }
 
-        $output_file = fopen(__DIR__ . '/../../../../public/atlas/v1/version/output.json', 'wb') or die('Unable to open file!');
-        fwrite($output_file, json_encode($return_arr));
+        return $return_arr;
     }
 
-    public function mainSqlUpdate()
+    public function writeJSONFile($json_array) {
+        $output_file = fopen(__DIR__ . '/../../../../public/atlas/v1/version/output.json', 'wb') or die('Unable to open file!');
+        fwrite($output_file, json_encode($json_array));
+    }
+
+    public function SQLImport()
     {
-        $this->getJsonAllUpdate();
+        foreach ($this->getJsonFile() as $item) {
+            $this->runSQLImport($item);
+        }
         echo 'Version updated!';
     }
 
-    public function getJsonAllUpdate()
+    public function getJsonFile()
     {
         $url = __DIR__ . '/posts.json';
         $json = file_get_contents($url);
-        $data = json_decode($json, true);
 
+        return json_decode($json, true);
+    }
+
+    public function runSQLImport($item)
+    {
         $stmt = $this->conn->prepare('SELECT * FROM version');
         $stmt->execute();
-
-        $row_count = $stmt->num_rows();
+        $result = $stmt->get_result();
+        $row_count = $result->num_rows;
 
         $stmt->close();
 
         if ($row_count) {
             if ($row_count === 1) {
-                foreach ($data as $item) {
-                    $this->querySqlUpdate($item);
-                }
+                $this->updateSQLEntries($item);
             }
         } else {
-            foreach ($data as $item) {
-                $this->querySqlSet($item);
-            }
+            $this->addSQLEntries($item);
         }
     }
 
-    public function querySqlUpdate($item)
+    public function addSQLEntries($item)
     {
-        $stmt = $this->conn->prepare('UPDATE version SET url=?, version=?, timestamp=? WHERE id=0');
-        $stmt->bind_param('ssi', $item['url'], $item['version'], $item['timestamp']);
+        $stmt = $this->conn->prepare('INSERT INTO version (id, url, version, timestamp) VALUES (?, ?, ?)');
+        $stmt->bind_param('issi', $item['id'], $item['url'], $item['version'], $item['timestamp']);
         $stmt->execute();
 
-        $this->generateJson();
+        $this->writeJSONFile($this->generateJSONFromSQL());
     }
 
-    public function querySqlSet($item)
+    public function updateSQLEntries($item)
     {
-        $stmt = $this->conn->prepare('INSERT INTO version (url, version, timestamp) VALUES (?, ?, ?)');
-        if ($stmt !== FALSE) {
-            $stmt->bind_param('ssi', $item['url'], $item['version'], $item['timestamp']);
-            $stmt->execute();
-        } else {
-            die('prepare() failed: ' . htmlspecialchars($this->conn->error));
-        }
+        $stmt = $this->conn->prepare('UPDATE version SET url=?, version=?, timestamp=? WHERE id=?');
+        $stmt->bind_param('ssii', $item['url'], $item['version'], $item['timestamp'], $item['id']);
+        $stmt->execute();
 
-        $this->generateJson();
+        $this->writeJSONFile($this->generateJSONFromSQL());
     }
 }

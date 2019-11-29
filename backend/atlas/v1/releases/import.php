@@ -18,9 +18,9 @@ $latest_post_title = checkLatestPost($url, $category);
 
 if (trim($latest_post_title) !== trim($latest_post['title'])) {
     if (!file_exists('posts.json')) {
-        initializePosts($url, $category, $post_count, $error_string);
+        fetchInitialPosts($url, $category, $post_count, $error_string);
     } else {
-        updatePosts($url, $category, $post_count, $error_string);
+        fetchNewPost($url, $category, $post_count, $error_string);
     }
 } else {
     echo "\n\n----- No new posts found. -----\n\nLatest post found: " . trim($latest_post_title) . "\nLatest post saved: " . trim($latest_post['title']) . "\n\n";
@@ -34,7 +34,7 @@ function checkLatestPost($url, $category)
     return $title;
 }
 
-function initializePosts($url, $category, $post_count, $error_string)
+function fetchInitialPosts($url, $category, $post_count, $error_string)
 {
     echo "\n\n----- Import started! -----\n\n\n";
 
@@ -120,13 +120,13 @@ function initializePosts($url, $category, $post_count, $error_string)
     $latest_post = fopen('latest.json', 'wb') or die('Unable to open file!');
     fwrite($latest_post, json_encode($output_items[0]));
 
-    handler();
+    importPosts();
 
     --$post_count;
     echo "\n----- Import successful! With a total of $post_count posts -----\n\n";
 }
 
-function updatePosts($url, $category, $post_count, $error_string)
+function fetchNewPost($url, $category, $post_count, $error_string)
 {
     echo "\n\n----- Import started! -----\n\n\n";
     $html = file_get_html($url . $category);
@@ -205,17 +205,17 @@ function updatePosts($url, $category, $post_count, $error_string)
     $latest_post = fopen('latest.json', 'wb') or die('Unable to open file!');
     fwrite($latest_post, json_encode($item)) . ',';
 
-    handler();
+    importPosts();
     sendNotification();
 
     echo "\n\n----- Import successful! -----\n\n";
 }
 
-function handler()
+function importPosts()
 {
-    include_once(__DIR__ . '/main.php');
+    include_once(__DIR__ . '/Releases.php');
     $Releases = new Releases();
-    $Releases->mainSql();
+    $Releases->SQLImport();
 }
 
 function sendNotification()

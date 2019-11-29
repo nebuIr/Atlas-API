@@ -27,15 +27,14 @@ class News
         }
     }
 
-    public function generateJson()
+    public function generateJSONFromSQL()
     {
         $stmt = $this->conn->prepare('SELECT id, url, title, timestamp, excerpt, image, image_small, body FROM news ORDER BY id DESC');
         $stmt->execute();
+        $result = $stmt->get_result();
 
         $output = [];
         $return_arr = [];
-
-        $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -52,45 +51,50 @@ class News
             }
         }
 
-        $output_file = fopen(__DIR__ . '/../../../../public/atlas/v1/news/output.json', 'wb') or die('Unable to open file!');
-        fwrite($output_file, json_encode($return_arr));
+        return $return_arr;
     }
 
-    public function mainSql()
+    public function writeJSONFile($json_array) {
+        $output_file = fopen(__DIR__ . '/../../../../public/atlas/v1/news/output.json', 'wb') or die('Unable to open file!');
+        fwrite($output_file, json_encode($json_array));
+    }
+
+    public function SQLImport()
     {
-        $this->getJson();
+        foreach ($this->getJsonFile() as $item) {
+            $this->runSQLImport($item);
+        }
+
         echo 'News updated!';
     }
 
-    public function getJson()
+    public function getJsonFile()
     {
         $url = __DIR__ . '/posts.json';
         $json = file_get_contents($url);
-        $data = json_decode($json, true);
-        foreach ($data as $item) {
-            $this->querySql($item);
-        }
+
+        return json_decode($json, true);
     }
 
-    public function querySql($item)
+    public function runSQLImport($item)
     {
-        $this->querySqlSet($item);
-        $this->querySqlUpdate($item);
+        $this->addSQLEntries($item);
+        $this->updateSQLEntries($item);
     }
 
-    public function querySqlSet($item)
+    public function addSQLEntries($item)
     {
         $stmt = $this->conn->prepare('INSERT INTO news (id, url, title, timestamp, excerpt, image, image_small, body) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
         $stmt->bind_param('ississss', $item['id'], $item['url'], $item['title'], $item["timestamp"], $item['excerpt'], $item['image'], $item['image_small'], $item['body']);
         $stmt->execute();
     }
 
-    public function querySqlUpdate($item)
+    public function updateSQLEntries($item)
     {
         $stmt = $this->conn->prepare('UPDATE news SET url=?, title=?, excerpt=?, image=?, image_small=?, body=? WHERE id=?');
         $stmt->bind_param('ssssssi', $item['url'], $item['title'], $item['excerpt'], $item['image'], $item['image_small'], $item['body'], $item['id']);
         $stmt->execute();
 
-        $this->generateJson();
+        $this->writeJSONFile($this->generateJSONFromSQL());
     }
 }

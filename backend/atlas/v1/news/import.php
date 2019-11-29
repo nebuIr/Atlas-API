@@ -19,9 +19,9 @@ $latest_post_title = checkLatestPost($url, $category);
 
 if (trim($latest_post_title) !== trim($latest_post['title'])) {
     if (!file_exists('posts.json')) {
-        initializePosts($url, $category, $page, $post_count, $error_string);
+        fetchInitialPosts($url, $category, $page, $post_count, $error_string);
     } else {
-        updatePosts($url, $category, $page, $post_count, $error_string);
+        fetchNewPost($url, $category, $page, $post_count, $error_string);
     }
 } else {
     echo "\n\n----- No new posts found. -----\n\nLatest post found: " . trim($latest_post_title) . "\nLatest post saved: " . trim($latest_post['title']) . "\n\n";
@@ -35,7 +35,7 @@ function checkLatestPost($url, $category)
     return $title;
 }
 
-function initializePosts($url, $category, $page, $post_count, $error_string)
+function fetchInitialPosts($url, $category, $page, $post_count, $error_string)
 {
     echo "\n\n----- Import started! -----\n\n\n";
     do {
@@ -114,7 +114,7 @@ function initializePosts($url, $category, $page, $post_count, $error_string)
             $latest_post = fopen('latest.json', 'wb') or die('Unable to open file!');
             fwrite($latest_post, json_encode($output_items[0]));
 
-            handler();
+            importPosts();
 
             $page_count = $page - 1;
             --$post_count;
@@ -127,7 +127,7 @@ function initializePosts($url, $category, $page, $post_count, $error_string)
     } while (!(strpos($item['title'], $error_string)));
 }
 
-function updatePosts($url, $category, $page, $post_count, $error_string)
+function fetchNewPost($url, $category, $page, $post_count, $error_string)
 {
     echo "\n\n----- Import started! -----\n\n\n";
     $html = file_get_html($url . $category . '/page/' . $page);
@@ -188,17 +188,17 @@ function updatePosts($url, $category, $page, $post_count, $error_string)
     $latest_post = fopen('latest.json', 'wb') or die('Unable to open file!');
     fwrite($latest_post, json_encode($item)) . ',';
 
-    handler();
+    importPosts();
     sendNotification();
 
     echo "\n\n----- Import successful! -----\n\n";
 }
 
-function handler()
+function importPosts()
 {
-    include_once(__DIR__ . '/main.php');
+    include_once(__DIR__ . '/News.php');
     $News = new News;
-    $News->mainSql();
+    $News->SQLImport();
 }
 
 function sendNotification()

@@ -27,15 +27,14 @@ class Releases
         }
     }
 
-    public function generateJson()
+    public function generateJSONFromSQL()
     {
         $stmt = $this->conn->prepare('SELECT id, url, title, platform_pc, platform_ps4, platform_xbox, excerpt, image, body FROM releases ORDER BY id DESC');
         $stmt->execute();
+        $result = $stmt->get_result();
 
         $output = array();
         $return_arr = array();
-
-        $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -53,33 +52,37 @@ class Releases
             }
         }
 
-        $output_file = fopen(__DIR__ . '/../../../../public/atlas/v1/releases/output.json', 'wb') or die('Unable to open file!');
-        fwrite($output_file, json_encode($return_arr));
+        return $return_arr;
     }
 
-    public function mainSql()
+    public function writeJSONFile($json_array) {
+        $output_file = fopen(__DIR__ . '/../../../../public/atlas/v1/releases/output.json', 'wb') or die('Unable to open file!');
+        fwrite($output_file, json_encode($json_array));
+    }
+
+    public function SQLImport()
     {
-        $this->getJson();
+        foreach ($this->getJsonFile() as $item) {
+            $this->runSQLImport($item);
+        }
         echo 'Releases updated!';
     }
 
-    public function getJson()
+    public function getJsonFile()
     {
         $url = __DIR__ . '/posts.json';
         $json = file_get_contents($url);
-        $data = json_decode($json, true);
-        foreach ($data as $item) {
-            $this->querySql($item);
-        }
+
+        return json_decode($json, true);
     }
 
-    public function querySql($item)
+    public function runSQLImport($item)
     {
-        $this->querySqlSet($item);
-        $this->querySqlUpdate($item);
+        $this->addSQLEntries($item);
+        $this->updateSQLEntries($item);
     }
 
-    public function querySqlSet($item)
+    public function addSQLEntries($item)
     {
         $pc = (int) $item['platforms']['pc'];
         $ps4 = (int) $item['platforms']['ps4'];
@@ -90,7 +93,7 @@ class Releases
         $stmt->execute();
     }
 
-    public function querySqlUpdate($item)
+    public function updateSQLEntries($item)
     {
         $pc = (int) $item['platforms']['pc'];
         $ps4 = (int) $item['platforms']['ps4'];
@@ -100,6 +103,6 @@ class Releases
         $stmt->bind_param('ssiiisssi', $item['url'], $item['title'], $pc, $ps4, $xbox, $item['excerpt'], $item['image'], $item['body'], $item['id']);
         $stmt->execute();
 
-        $this->generateJson();
+        $this->writeJSONFile($this->generateJSONFromSQL());
     }
 }

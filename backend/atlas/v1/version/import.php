@@ -9,14 +9,15 @@ header('Content-Type: application/json');
 $items = array();
 $url = 'https://nomanssky.gamepedia.com/';
 
-updatePosts($url);
+fetchVersion($url);
 
-function updatePosts($url)
+function fetchVersion($url)
 {
     echo "\n\n----- Import started! -----\n\n\n";
     $html = file_get_html($url);
     $posts = $html->find('div.fplink', 0);
 
+    $item['id'] = 0;
     $item['url'] = $posts->find('a', 0)->href;
     $baseUri = 'nomanssky.gamepedia.com';
     $baseUriSsl = 'https://nomanssky.gamepedia.com';
@@ -40,14 +41,14 @@ function updatePosts($url)
     $export = fopen('posts.json', 'wb') or die('Unable to open file!');
     fwrite($export, json_encode($items));
 
-    handler();
+    importVersion();
 
     echo "\n\n----- Import successful! -----\n\n";
 }
 
-function handler()
+function importVersion()
 {
-    include_once(__DIR__ . '/main.php');
+    include_once(__DIR__ . '/Version.php');
     $Version = new Version();
-    $Version->mainSqlUpdate();
+    $Version->SQLImport();
 }
