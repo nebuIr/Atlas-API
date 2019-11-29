@@ -116,9 +116,11 @@ function fetchInitialPosts($url, $category, $post_count, $error_string)
     echo "Completed import of releases!\n\n";
     $export = fopen('posts.json', 'wb') or die('Unable to open file!');
     fwrite($export, json_encode($output_items));
+    fclose($export);
 
     $latest_post = fopen('latest.json', 'wb') or die('Unable to open file!');
     fwrite($latest_post, json_encode($output_items[0]));
+    fclose($latest_post);
 
     importPosts();
 
@@ -201,9 +203,11 @@ function fetchNewPost($url, $category, $post_count, $error_string)
     $tempArray = json_decode($export_content, true);
     array_unshift($tempArray, $item);
     fwrite($export, json_encode($tempArray));
+    fclose($export);
 
     $latest_post = fopen('latest.json', 'wb') or die('Unable to open file!');
-    fwrite($latest_post, json_encode($item)) . ',';
+    fwrite($latest_post, json_encode($item));
+    fclose($latest_post);
 
     importPosts();
     sendNotification();

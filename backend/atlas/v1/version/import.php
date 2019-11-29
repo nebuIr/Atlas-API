@@ -40,6 +40,7 @@ function fetchVersion($url)
 
     $export = fopen('posts.json', 'wb') or die('Unable to open file!');
     fwrite($export, json_encode($items));
+    fclose($export);
 
     importVersion();
 
