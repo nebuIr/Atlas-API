@@ -5,8 +5,9 @@ if (PHP_SAPI !== 'cli') {
 
 include __DIR__ . '/../../../lib/simple_html_dom.php';
 header('Content-Type: application/json');
-$latest_post_json = file_get_contents('latest.json');
-$latest_post = json_decode($latest_post_json, true);
+$posts_file = file_get_contents('posts.json');
+$posts_json = json_decode($posts_file, true);
+$latest_post = $posts_json[0];
 
 $items = array();
 $url = 'https://www.nomanssky.com/';
@@ -18,6 +19,7 @@ $latest_post_title = checkLatestPost($url, $category);
 
 if (trim($latest_post_title) !== trim($latest_post['title'])) {
     if (filesize('posts.json') === 0 || !file_exists('posts.json')) {
+        echo "Starting initial import ...\n";
         fetchInitialPosts($url, $category, $post_count, $error_string);
     } else {
         fetchNewPost($url, $category, $post_count, $error_string);
@@ -118,10 +120,6 @@ function fetchInitialPosts($url, $category, $post_count, $error_string)
     fwrite($export, json_encode($output_items));
     fclose($export);
 
-    $latest_post = fopen('latest.json', 'wb') or die('Unable to open file!');
-    fwrite($latest_post, json_encode($output_items[0]));
-    fclose($latest_post);
-
     importPosts();
 
     --$post_count;
@@ -131,6 +129,7 @@ function fetchInitialPosts($url, $category, $post_count, $error_string)
 function fetchNewPost($url, $category, $post_count, $error_string)
 {
     echo "\n\n----- Import started! -----\n\n\n";
+    echo "New post found ...\n";
     $html = file_get_html($url . $category);
     $posts = $html->find('div.grid__cell', 0);
 
@@ -204,10 +203,6 @@ function fetchNewPost($url, $category, $post_count, $error_string)
     array_unshift($tempArray, $item);
     fwrite($export, json_encode($tempArray));
     fclose($export);
-
-    $latest_post = fopen('latest.json', 'wb') or die('Unable to open file!');
-    fwrite($latest_post, json_encode($item));
-    fclose($latest_post);
 
     importPosts();
     sendNotification();
