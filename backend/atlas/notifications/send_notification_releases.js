@@ -13,6 +13,6 @@ admin.initializeApp({
 releases.data.run();
 
 setTimeout(function () {
-    console.log("===== Script Ended (releases) =====");
+    console.log("===== [RELEASES] Script Ended automatically after 60s =====");
     return process.exit(0);
 }, 60000);

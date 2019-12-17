@@ -15,6 +15,6 @@ news.data.run();
 releases.data.run();
 
 setTimeout(function () {
-    console.log("===== Script Ended =====");
+    console.log("===== Script Ended automatically after 60s =====");
     return process.exit(0);
 }, 60000);

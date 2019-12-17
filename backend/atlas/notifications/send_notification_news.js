@@ -13,6 +13,6 @@ admin.initializeApp({
 news.data.run();
 
 setTimeout(function () {
-    console.log("===== Script Ended (news) =====");
+    console.log("===== [NEWS] Script Ended automatically after 60s =====");
     return process.exit(0);
 }, 60000);
