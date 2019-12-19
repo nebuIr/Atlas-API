@@ -14,11 +14,14 @@ $url = 'https://www.nomanssky.com/';
 $category = 'news';
 $page = 1;
 $post_count = 1;
-$error_string = "error";
+$error_string = 'error';
 
-$latest_post_title = checkLatestPost($url, $category);
+$latest_post_timestamp = strtotime(checkLatestPostTimestamp($url, $category));
+$latest_post_timestamp_saved = trim($latest_post['timestamp']);
+$latest_post_title = trim(checkLatestPostTitle($url, $category));
+$latest_post_title_saved = trim($latest_post['title']);
 
-if (trim($latest_post_title) !== trim($latest_post['title'])) {
+if ((int)$latest_post_timestamp !== (int)$latest_post_timestamp_saved) {
     if (filesize('posts.json') === 0 || !file_exists('posts.json')) {
         echo "Starting initial import ...\n";
         fetchInitialPosts($url, $category, $page, $post_count, $error_string);
@@ -26,10 +29,20 @@ if (trim($latest_post_title) !== trim($latest_post['title'])) {
         fetchNewPost($url, $category, $page, $post_count, $error_string);
     }
 } else {
-    echo "\n\n----- No new posts found. -----\n\nLatest post found: " . trim($latest_post_title) . "\nLatest post saved: " . trim($latest_post['title']) . "\n\n";
+    echo "\n\n----- No new posts found. -----\n\nLatest post found (" . $latest_post_timestamp . '): ' . $latest_post_title . "\nLatest post saved (" . $latest_post_timestamp_saved . '): ' . $latest_post_title_saved . "\n\n";
 }
 
-function checkLatestPost($url, $category)
+function checkLatestPostTimestamp($url, $category)
+{
+    $html = file_get_html($url . $category);
+    $posts = $html->find('article', 0);
+    $article_url = $posts->find('a', 0)->href;
+    $article_html = file_get_html($article_url);
+    $timestamp = $article_html->find('meta[property=article:published_time]', 0)->content;
+    return $timestamp;
+}
+
+function checkLatestPostTitle($url, $category)
 {
     $html = file_get_html($url . $category);
     $posts = $html->find('article', 0);
