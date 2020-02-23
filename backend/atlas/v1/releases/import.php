@@ -100,6 +100,9 @@ function fetchInitialPosts($url, $category, $post_count, $error_string)
         $bodyPattern = array("\\\\'");
         $bodyReplace = array('\'');
         $body = str_replace($bodyPattern, $bodyReplace, $body);
+        $body_pattern = array("\t");
+        $body_replace = array('');
+        $body = str_replace($body_pattern, $body_replace, $body);
         $item['body'] = $body;
         $items[] = $item;
 
@@ -192,6 +195,9 @@ function fetchNewPost($url, $category, $post_count, $error_string)
     $bodyPattern = array("\\\\'");
     $bodyReplace = array('\'');
     $body = str_replace($bodyPattern, $bodyReplace, $body);
+    $body_pattern = array("\t");
+    $body_replace = array('');
+    $body = str_replace($body_pattern, $body_replace, $body);
     $item['body'] = $body;
     $items[] = $item;
 
