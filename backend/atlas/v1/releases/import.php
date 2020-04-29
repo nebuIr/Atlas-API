@@ -211,7 +211,6 @@ function fetchNewPost($url, $category, $post_count, $error_string)
     fclose($export);
 
     importPosts();
-    sendNotification();
 
     echo "\n\n----- Import successful! -----\n\n";
 }
@@ -221,10 +220,4 @@ function importPosts()
     include_once(__DIR__ . '/Releases.php');
     $Releases = new Releases();
     $Releases->SQLImport();
-}
-
-function sendNotification()
-{
-    $output = shell_exec('/usr/bin/nodejs ' . __DIR__ . '/../../notifications/send_notification_releases.js');
-    echo $output;
 }
