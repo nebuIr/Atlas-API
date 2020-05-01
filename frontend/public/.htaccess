@@ -1,0 +1,15 @@
+RewriteEngine On
+RewriteBase /
+Options -Indexes
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+	RewriteCond %{REQUEST_URI} /+[^\.]+$
+	RewriteRule ^(.+[^/])$ %{REQUEST_URI}/ [R=301,L]
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteCond %{SCRIPT_FILENAME} !-f
+    RewriteCond %{SCRIPT_FILENAME} !-d
+    RewriteRule . /index.php [L,QSA]
+</IfModule>

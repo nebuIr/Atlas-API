@@ -27,18 +27,25 @@ class Version
         }
     }
 
-    public function generateJSONFromSQL()
+    public function getSQL()
     {
-        $stmt = $this->conn->prepare('SELECT id, url, version, timestamp FROM version');
+        $stmt = $this->conn->prepare('SELECT * FROM version');
         $stmt->execute();
         $result = $stmt->get_result();
+        $stmt->close();
+
+        return $result;
+    }
+
+    public function getJSONFromSQL()
+    {
+        $result = $this->getSQL();
 
         $output = array();
         $return_arr = array();
 
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                $output['id'] = (int)$row['id'];
                 $output['url'] = $row['url'];
                 $output['version'] = $row['version'];
                 $output['timestamp'] = $row['timestamp'];
@@ -51,7 +58,7 @@ class Version
     }
 
     public function writeJSONFile($json_array) {
-        $output_file = fopen(__DIR__ . '/../../../../public/atlas/v1/version/output.json', 'wb') or die('Unable to open file!');
+        $output_file = fopen(__DIR__ . '/output.json', 'wb') or die('Unable to open file!');
         fwrite($output_file, json_encode($json_array));
     }
 
@@ -73,12 +80,8 @@ class Version
 
     public function runSQLImport($item)
     {
-        $stmt = $this->conn->prepare('SELECT * FROM version');
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $result = $this->getSQL();
         $row_count = $result->num_rows;
-
-        $stmt->close();
 
         if ($row_count) {
             if ($row_count === 1) {
@@ -95,7 +98,7 @@ class Version
         $stmt->bind_param('issi', $item['id'], $item['url'], $item['version'], $item['timestamp']);
         $stmt->execute();
 
-        $this->writeJSONFile($this->generateJSONFromSQL());
+        $this->writeJSONFile($this->getJSONFromSQL());
     }
 
     public function updateSQLEntries($item)
@@ -103,7 +106,5 @@ class Version
         $stmt = $this->conn->prepare('UPDATE version SET url=?, version=?, timestamp=? WHERE id=?');
         $stmt->bind_param('ssii', $item['url'], $item['version'], $item['timestamp'], $item['id']);
         $stmt->execute();
-
-        $this->writeJSONFile($this->generateJSONFromSQL());
     }
 }

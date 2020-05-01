@@ -27,17 +27,34 @@ class Releases
         }
     }
 
-    public function generateJSONFromSQL()
+    public function getSQL()
     {
-        $stmt = $this->conn->prepare('SELECT id, url, title, platform_pc, platform_ps4, platform_xbox, excerpt, image, body FROM releases ORDER BY id DESC');
+        $stmt = $this->conn->prepare('SELECT * FROM releases ORDER BY id DESC');
         $stmt->execute();
         $result = $stmt->get_result();
+        $stmt->close();
 
+        return $result;
+    }
+
+    public function getSQLbyId($id)
+    {
+        $stmt = $this->conn->prepare('SELECT * FROM releases WHERE id=?');
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        return $result;
+    }
+
+    public function getJSONFromSQL($sql_result, $latest, $params)
+    {
         $output = array();
         $return_arr = array();
 
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
+        if ($sql_result->num_rows > 0) {
+            while ($row = $sql_result->fetch_assoc()) {
                 $output['id'] = (int) $row['id'];
                 $output['url'] = $row['url'];
                 $output['title'] = $row['title'];
@@ -52,11 +69,25 @@ class Releases
             }
         }
 
-        return $return_arr;
+        $array_length = count($return_arr);
+
+        if ($latest) {
+            return $return_arr[0];
+        }
+
+        if (!array_key_exists('offset', $params) || $params['offset'] < 0) {
+            $params['offset'] = 0;
+        }
+
+        if (!array_key_exists('limit', $params) || $params['limit'] < 0) {
+            $params['limit'] = $array_length;
+        }
+
+        return array_slice($return_arr, 0 + $params['offset'], $params['limit'] + $params['offset']);
     }
 
     public function writeJSONFile($json_array) {
-        $output_file = fopen(__DIR__ . '/../../../../public/atlas/v1/releases/output.json', 'wb') or die('Unable to open file!');
+        $output_file = fopen(__DIR__ . '/output.json', 'wb') or die('Unable to open file!');
         fwrite($output_file, json_encode($json_array));
     }
 
@@ -102,7 +133,5 @@ class Releases
         $stmt = $this->conn->prepare('UPDATE releases SET url=?, title=?, platform_pc=?, platform_ps4=?, platform_xbox=?, excerpt=?, image=?, body=? WHERE id=?');
         $stmt->bind_param('ssiiisssi', $item['url'], $item['title'], $pc, $ps4, $xbox, $item['excerpt'], $item['image'], $item['body'], $item['id']);
         $stmt->execute();
-
-        $this->writeJSONFile($this->generateJSONFromSQL());
     }
 }

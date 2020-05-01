@@ -6,6 +6,3 @@
 /backend/atlas/v1/releases/latest.json
 /backend/atlas/v1/releases/posts.json
 /backend/atlas/v1/version/posts.json
-/public/atlas/v1/news/output.json
-/public/atlas/v1/releases/output.json
-/public/atlas/v1/version/output.json
