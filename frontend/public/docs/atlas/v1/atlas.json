@@ -97,6 +97,17 @@ paths:
       - releases
       summary: Returns all No Man's Sky releases
       operationId: releases
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Limit results returned, defaults to all entries returned
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: Offset or skip results from the beginning of the query
       responses:
         200:
           description: successful operation
