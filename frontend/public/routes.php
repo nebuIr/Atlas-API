@@ -14,7 +14,13 @@ switch($section[1])
                         {
                             case '':
                                 header('Content-Type: application/json');
-                                echo json_encode($data->getJSONFromSQL($data->getSQL(), false, $_GET));
+                                if (isset($_GET['order'])) {
+                                    if ('desc' === $_GET['order'] || 'asc' === $_GET['order']) {
+                                        echo json_encode($data->getJSONFromSQL($data->getSQL($_GET['order']), false, $_GET));
+                                    }
+                                } else {
+                                    echo json_encode($data->getJSONFromSQL($data->getSQL(), false, $_GET));
+                                }
                                 break;
 
                             case ((bool)preg_match('/^\d+$/', $section[4]) === true):
@@ -40,7 +46,13 @@ switch($section[1])
                         {
                             case '':
                                 header('Content-Type: application/json');
-                                echo json_encode($data->getJSONFromSQL($data->getSQL(), false, $_GET));
+                                if (isset($_GET['order'])) {
+                                    if ('desc' === $_GET['order'] || 'asc' === $_GET['order']) {
+                                        echo json_encode($data->getJSONFromSQL($data->getSQL($_GET['order']), false, $_GET));
+                                    }
+                                } else {
+                                    echo json_encode($data->getJSONFromSQL($data->getSQL(), false, $_GET));
+                                }
                                 break;
 
                             case ((bool)preg_match('/^\d+$/', $section[4]) === true):

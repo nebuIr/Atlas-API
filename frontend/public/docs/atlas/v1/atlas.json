@@ -45,6 +45,14 @@ paths:
           schema:
             type: integer
           description: Offset or skip results from the beginning of the query
+        - in: query
+          name: order
+          schema:
+            type: string
+            enum:
+              - desc
+              - asc
+          description: Change result ordering by setting values of asc or desc
       responses:
         200:
           description: successful operation
@@ -108,6 +116,14 @@ paths:
           schema:
             type: integer
           description: Offset or skip results from the beginning of the query
+        - in: query
+          name: order
+          schema:
+            type: string
+            enum:
+              - desc
+              - asc
+          description: Change result ordering by setting values of asc or desc
       responses:
         200:
           description: successful operation

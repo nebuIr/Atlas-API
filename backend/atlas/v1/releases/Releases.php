@@ -27,9 +27,9 @@ class Releases
         }
     }
 
-    public function getSQL()
+    public function getSQL($order = 'DESC')
     {
-        $stmt = $this->conn->prepare('SELECT * FROM releases ORDER BY id DESC');
+        $stmt = $this->conn->prepare("SELECT * FROM releases ORDER BY id $order");
         $stmt->execute();
         $result = $stmt->get_result();
         $stmt->close();
