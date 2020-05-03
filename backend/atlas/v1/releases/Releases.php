@@ -79,7 +79,7 @@ class Releases
             $params['offset'] = 0;
         }
 
-        if (!array_key_exists('limit', $params) || $params['limit'] < 0) {
+        if (!array_key_exists('limit', $params) || $params['limit'] <= 0) {
             $params['limit'] = $array_length;
         }
 
