@@ -82,7 +82,7 @@ class News
             $params['limit'] = $array_length;
         }
 
-        return array_slice($return_arr, 0 + $params['offset'], $params['limit'] + $params['offset']);
+        return array_slice($return_arr, 0 + $params['offset'], $params['limit']);
     }
 
     public function writeJSONFile($json_array) {
