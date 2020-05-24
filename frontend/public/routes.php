@@ -8,7 +8,7 @@ switch($section[1])
                 switch($section[3])
                 {
                     case 'news':
-                        require_once __DIR__ . '/../../backend/atlas/v1/news/News.php';
+                        require_once __DIR__ . '/../../backend/atlas/v1/classes/News.php';
                         $data = new News();
                         switch($section[4])
                         {
@@ -40,7 +40,7 @@ switch($section[1])
                         break;
 
                     case 'releases':
-                        require_once __DIR__ . '/../../backend/atlas/v1/releases/Releases.php';
+                        require_once __DIR__ . '/../../backend/atlas/v1/classes/Releases.php';
                         $data = new Releases();
                         switch($section[4])
                         {
@@ -73,7 +73,7 @@ switch($section[1])
                         break;
 
                     case 'version':
-                        require_once __DIR__ . '/../../backend/atlas/v1/version/Version.php';
+                        require_once __DIR__ . '/../../backend/atlas/v1/classes/Version.php';
                         $data = new Version();
                         switch($section[4])
                         {
