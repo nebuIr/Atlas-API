@@ -4,9 +4,6 @@ use \Dotenv\Dotenv;
 
 class Version
 {
-    /**
-     * @var mysqli
-     */
     private $conn;
 
     public function __construct()
@@ -37,7 +34,7 @@ class Version
         return $result;
     }
 
-    public function getJSONFromSQL()
+    public function getJSONFromSQL(): array
     {
         $result = $this->getSQL();
 
@@ -57,28 +54,7 @@ class Version
         return $return_arr;
     }
 
-    public function writeJSONFile($json_array) {
-        $output_file = fopen(__DIR__ . '/output.json', 'wb') or die('Unable to open file!');
-        fwrite($output_file, json_encode($json_array));
-    }
-
-    public function SQLImport()
-    {
-        foreach ($this->getJsonFile() as $item) {
-            $this->runSQLImport($item);
-        }
-        echo 'Version updated!';
-    }
-
-    public function getJsonFile()
-    {
-        $url = __DIR__ . '/posts.json';
-        $json = file_get_contents($url);
-
-        return json_decode($json, true);
-    }
-
-    public function runSQLImport($item)
+    public function SQLImport($item): void
     {
         $result = $this->getSQL();
         $row_count = $result->num_rows;
@@ -92,18 +68,16 @@ class Version
         }
     }
 
-    public function addSQLEntries($item)
+    public function addSQLEntries($item): void
     {
-        $stmt = $this->conn->prepare('INSERT INTO version (id, url, version, timestamp) VALUES (?, ?, ?)');
+        $stmt = $this->conn->prepare('INSERT INTO version (id, url, version, timestamp) VALUES (?, ?, ?, ?)');
         $stmt->bind_param('issi', $item['id'], $item['url'], $item['version'], $item['timestamp']);
         $stmt->execute();
-
-        $this->writeJSONFile($this->getJSONFromSQL());
     }
 
-    public function updateSQLEntries($item)
+    public function updateSQLEntries($item): void
     {
-        $stmt = $this->conn->prepare('UPDATE version SET url=?, version=?, timestamp=? WHERE id=?');
+        $stmt = $this->conn->prepare('UPDATE version SET url = ?, version = ?, timestamp = ? WHERE id = ?');
         $stmt->bind_param('ssii', $item['url'], $item['version'], $item['timestamp'], $item['id']);
         $stmt->execute();
     }

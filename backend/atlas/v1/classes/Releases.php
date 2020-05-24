@@ -4,9 +4,6 @@ use \Dotenv\Dotenv;
 
 class Releases
 {
-    /**
-     * @var mysqli
-     */
     private $conn;
 
     public function __construct()
@@ -27,7 +24,7 @@ class Releases
         }
     }
 
-    public function getSQL($order = 'DESC')
+    public function getItems($order = 'DESC')
     {
         $stmt = $this->conn->prepare("SELECT * FROM releases ORDER BY id $order");
         $stmt->execute();
@@ -37,18 +34,51 @@ class Releases
         return $result;
     }
 
-    public function getSQLbyId($id)
+    public function getItemCount(): int
     {
-        $stmt = $this->conn->prepare('SELECT * FROM releases WHERE id=?');
-        $stmt->bind_param('i', $id);
+        $stmt = $this->conn->prepare("SELECT * FROM releases");
         $stmt->execute();
-        $result = $stmt->get_result();
-        $stmt->close();
 
-        return $result;
+        return $stmt->get_result()->num_rows;
     }
 
-    public function getJSONFromSQL($sql_result, $latest, $params)
+    public function getLatestResult()
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM releases ORDER BY id DESC LIMIT 1");
+        $stmt->execute();
+
+        return $stmt->get_result();
+    }
+
+    public function getResultByID($id)
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM releases WHERE id = ?");
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+
+        return $stmt->get_result();
+    }
+
+    public function getRowByID($id): ?array
+    {
+        return $this->getResultByID($id)->fetch_assoc();
+    }
+
+    public function getFieldByID($field, $id)
+    {
+        $row = $this->getRowByID($id);
+
+        return $row[$field];
+    }
+
+    public function getFieldFromLatestResult($field)
+    {
+        $row = $this->getLatestResult()->fetch_assoc();
+
+        return $row[$field] ?? 0;
+    }
+
+    public function getJSONFromSQL($sql_result, $latest, $params): array
     {
         $output = array();
         $return_arr = array();
@@ -86,52 +116,30 @@ class Releases
         return array_slice($return_arr, 0 + $params['offset'], $params['limit']);
     }
 
-    public function writeJSONFile($json_array) {
-        $output_file = fopen(__DIR__ . '/output.json', 'wb') or die('Unable to open file!');
-        fwrite($output_file, json_encode($json_array));
-    }
-
-    public function SQLImport()
+    public function SQLImport($item, $mode): void
     {
-        foreach ($this->getJsonFile() as $item) {
-            $this->runSQLImport($item);
+        switch ($mode) {
+            case 'add':
+                $this->addSQLEntry($item);
+                break;
+
+            case 'update':
+                $this->updateSQLEntry($item);
+                break;
         }
-        echo 'Releases updated!';
     }
 
-    public function getJsonFile()
+    public function addSQLEntry($item): void
     {
-        $url = __DIR__ . '/posts.json';
-        $json = file_get_contents($url);
-
-        return json_decode($json, true);
-    }
-
-    public function runSQLImport($item)
-    {
-        $this->addSQLEntries($item);
-        $this->updateSQLEntries($item);
-    }
-
-    public function addSQLEntries($item)
-    {
-        $pc = (int) $item['platforms']['pc'];
-        $ps4 = (int) $item['platforms']['ps4'];
-        $xbox = (int) $item['platforms']['xbox'];
-
         $stmt = $this->conn->prepare('INSERT INTO releases (id, url, title, platform_pc, platform_ps4, platform_xbox, excerpt, image, body) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
-        $stmt->bind_param('issiiisss', $item['id'], $item['url'], $item['title'], $pc, $ps4, $xbox, $item['excerpt'], $item['image'], $item['body']);
+        $stmt->bind_param('issiiisss', $item['id'], $item['url'], $item['title'], $item['platforms']['pc'], $item['platforms']['ps4'], $item['platforms']['xbox'], $item['excerpt'], $item['image'], $item['body']);
         $stmt->execute();
     }
 
-    public function updateSQLEntries($item)
+    public function updateSQLEntry($item): void
     {
-        $pc = (int) $item['platforms']['pc'];
-        $ps4 = (int) $item['platforms']['ps4'];
-        $xbox = (int) $item['platforms']['xbox'];
-
         $stmt = $this->conn->prepare('UPDATE releases SET url=?, title=?, platform_pc=?, platform_ps4=?, platform_xbox=?, excerpt=?, image=?, body=? WHERE id=?');
-        $stmt->bind_param('ssiiisssi', $item['url'], $item['title'], $pc, $ps4, $xbox, $item['excerpt'], $item['image'], $item['body'], $item['id']);
+        $stmt->bind_param('ssiiisssi', $item['url'], $item['title'], $item['platforms']['pc'], $item['platforms']['ps4'], $item['platforms']['xbox'], $item['excerpt'], $item['image'], $item['body'], $item['id']);
         $stmt->execute();
     }
 }

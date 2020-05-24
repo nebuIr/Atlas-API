@@ -16,21 +16,21 @@ switch($section[1])
                                 header('Content-Type: application/json');
                                 if (isset($_GET['order'])) {
                                     if ('desc' === $_GET['order'] || 'asc' === $_GET['order']) {
-                                        echo json_encode($data->getJSONFromSQL($data->getSQL($_GET['order']), false, $_GET));
+                                        echo json_encode($data->getJSONFromSQL($data->getItems($_GET['order']), false, $_GET));
                                     }
                                 } else {
-                                    echo json_encode($data->getJSONFromSQL($data->getSQL(), false, $_GET));
+                                    echo json_encode($data->getJSONFromSQL($data->getItems(), false, $_GET));
                                 }
                                 break;
 
                             case ((bool)preg_match('/^\d+$/', $section[4]) === true):
                                 header('Content-Type: application/json');
-                                echo json_encode($data->getJSONFromSQL($data->getSQLbyId($section[4]),false, $_GET));
+                                echo json_encode($data->getJSONFromSQL($data->getResultByID($section[4]),false, $_GET));
                                 break;
 
                             case 'latest':
                                 header('Content-Type: application/json');
-                                echo json_encode($data->getJSONFromSQL($data->getSQL(),true, $_GET));
+                                echo json_encode($data->getJSONFromSQL($data->getItems(),true, $_GET));
                                 break;
 
                             default:
@@ -48,22 +48,22 @@ switch($section[1])
                                 header('Content-Type: application/json');
                                 if (isset($_GET['order'])) {
                                     if ('desc' === $_GET['order'] || 'asc' === $_GET['order']) {
-                                        echo json_encode($data->getJSONFromSQL($data->getSQL($_GET['order']), false, $_GET));
+                                        echo json_encode($data->getJSONFromSQL($data->getItems($_GET['order']), false, $_GET));
                                     }
                                 } else {
-                                    echo json_encode($data->getJSONFromSQL($data->getSQL(), false, $_GET));
+                                    echo json_encode($data->getJSONFromSQL($data->getItems(), false, $_GET));
                                 }
                                 break;
 
                             case ((bool)preg_match('/^\d+$/', $section[4]) === true):
                                 header('Content-Type: application/json');
-                                echo json_encode($data->getJSONFromSQL($data->getSQLbyId($section[4]),false, $_GET));
+                                echo json_encode($data->getJSONFromSQL($data->getResultbyId($section[4]),false, $_GET));
                                 break;
 
                             case 'latest':
                                 header('Content-Type: application/json');
                                 $params = ['latest' => true];
-                                echo json_encode($data->getJSONFromSQL($data->getSQL(), true, $_GET));
+                                echo json_encode($data->getJSONFromSQL($data->getItems(), true, $_GET));
                                 break;
 
                             default:

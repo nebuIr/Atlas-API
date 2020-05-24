@@ -4,9 +4,6 @@ use \Dotenv\Dotenv;
 
 class News
 {
-    /**
-     * @var mysqli
-     */
     private $conn;
 
     public function __construct()
@@ -27,7 +24,7 @@ class News
         }
     }
 
-    public function getSQL($order = 'DESC')
+    public function getItems($order = 'DESC')
     {
         $stmt = $this->conn->prepare("SELECT * FROM news ORDER BY id $order");
         $stmt->execute();
@@ -37,18 +34,51 @@ class News
         return $result;
     }
 
-    public function getSQLbyId($id)
+    public function getItemCount(): int
     {
-        $stmt = $this->conn->prepare('SELECT * FROM news WHERE id=?');
-        $stmt->bind_param('i', $id);
+        $stmt = $this->conn->prepare("SELECT * FROM news");
         $stmt->execute();
-        $result = $stmt->get_result();
-        $stmt->close();
 
-        return $result;
+        return $stmt->get_result()->num_rows;
     }
 
-    public function getJSONFromSQL($sql_result, $latest, $params)
+    public function getLatestResult()
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM news ORDER BY id DESC LIMIT 1");
+        $stmt->execute();
+
+        return $stmt->get_result();
+    }
+
+    public function getResultByID($id)
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM news WHERE id = ?");
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+
+        return $stmt->get_result();
+    }
+
+    public function getRowByID($id): ?array
+    {
+        return $this->getResultByID($id)->fetch_assoc();
+    }
+
+    public function getFieldByID($field, $id)
+    {
+        $row = $this->getRowByID($id);
+
+        return $row[$field];
+    }
+
+    public function getFieldFromLatestResult($field)
+    {
+        $row = $this->getLatestResult()->fetch_assoc();
+
+        return $row[$field] ?? 0;
+    }
+
+    public function getJSONFromSQL($sql_result, $latest, $params): array
     {
         $output = [];
         $return_arr = [];
@@ -85,42 +115,27 @@ class News
         return array_slice($return_arr, 0 + $params['offset'], $params['limit']);
     }
 
-    public function writeJSONFile($json_array) {
-        $output_file = fopen(__DIR__ . '/output.json', 'wb') or die('Unable to open file!');
-        fwrite($output_file, json_encode($json_array));
-    }
-
-    public function SQLImport()
+    public function SQLImport($item, $mode): void
     {
-        foreach ($this->getJsonFile() as $item) {
-            $this->runSQLImport($item);
+        switch ($mode) {
+            case 'add':
+                $this->addSQLEntry($item);
+                break;
+
+            case 'update':
+                $this->updateSQLEntry($item);
+                break;
         }
-
-        echo 'News updated!';
     }
 
-    public function getJsonFile()
-    {
-        $url = __DIR__ . '/posts.json';
-        $json = file_get_contents($url);
-
-        return json_decode($json, true);
-    }
-
-    public function runSQLImport($item)
-    {
-        $this->addSQLEntries($item);
-        $this->updateSQLEntries($item);
-    }
-
-    public function addSQLEntries($item)
+    public function addSQLEntry($item): void
     {
         $stmt = $this->conn->prepare('INSERT INTO news (id, url, title, timestamp, excerpt, image, image_small, body) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
         $stmt->bind_param('ississss', $item['id'], $item['url'], $item['title'], $item["timestamp"], $item['excerpt'], $item['image'], $item['image_small'], $item['body']);
         $stmt->execute();
     }
 
-    public function updateSQLEntries($item)
+    public function updateSQLEntry($item): void
     {
         $stmt = $this->conn->prepare('UPDATE news SET url=?, title=?, excerpt=?, image=?, image_small=?, body=? WHERE id=?');
         $stmt->bind_param('ssssssi', $item['url'], $item['title'], $item['excerpt'], $item['image'], $item['image_small'], $item['body'], $item['id']);
