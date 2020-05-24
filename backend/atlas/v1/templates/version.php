@@ -1,15 +1,14 @@
 <?php
-require_once __DIR__ . '/../../../lib/simple_html_dom.php';
 
 function getVersion($url): array
 {
     $html = file_get_html($url);
     $post = $html->find('div.fplink', 0);
 
-    return template($post);
+    return templateVersion($post);
 }
 
-function template($post)
+function templateVersion($post)
 {
     // ID
     $item['id'] = 0;
@@ -32,5 +31,6 @@ function template($post)
     $item['timestamp'] = explode('(', $item['timestamp'])[1];
     $item['timestamp'] = strtotime(str_replace($search, $replace, $item['timestamp']));
 
+    echo 'Version added to array: ' . $item['version'] . "\n";
     return $item;
 }

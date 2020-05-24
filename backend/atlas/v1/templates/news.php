@@ -1,16 +1,18 @@
 <?php
-require_once __DIR__ . '/../../../lib/simple_html_dom.php';
 
-function getNews($url, $category, $latest_id = null, $single = true): array
+function getNews($url, $category): array
 {
+    $news = new News();
     $page = 1;
     $items = [];
     $result = [];
+    $end_reached = false;
     do {
         set_error_handler(
-            function ($err_severity, $err_msg, $err_file, $err_line, array $err_context) {
-                // do not throw an exception if the @-operator is used (suppress)
-                if (error_reporting() === 0) return false;
+            static function ($err_severity, $err_msg, $err_file, $err_line, array $err_context) {
+                if (error_reporting() === 0) {
+                    return false;
+                }
                 throw new ErrorException($err_msg, 0, $err_severity, $err_file, $err_line);
             },
             E_WARNING
@@ -19,58 +21,42 @@ function getNews($url, $category, $latest_id = null, $single = true): array
             $html = file_get_html($url . $category . '/page/' . $page);
             $posts = $html->find('article');
 
-            if ($single) {
-                return template($posts[0], $latest_id);
-            }
-
             foreach ($posts as $post) {
-                $items[] = template($post, null);
+                $item = templateNews($post);
+
+                if ($news->getFieldByTimestamp('timestamp', $item['timestamp'])) {
+                    if (!count($items)) {
+                        echo "No new news found.\n";
+                    }
+                    throw new Exception('Item already in DB');
+                }
+
+                echo 'Item added to array: ' . $item['title'] . "\n";
+                $items[] = $item;
             }
 
             $page++;
         } catch (Exception $e) {
+            $db_count = $news->getItemCount();
             $count = count($items);
             foreach ($items as $item) {
-                $item['id'] = $count;
+                $item['id'] = $count + $db_count;
                 $result[] = $item;
                 --$count;
             }
 
-            $page = false;
+            $end_reached = true;
             break;
         }
 
         restore_error_handler();
-    } while ($page);
+    } while (!$end_reached);
 
     return $result;
 }
 
-function getTimestamp($url, $category): int
+function templateNews($post): array
 {
-    $html = file_get_html($url . $category);
-    $posts = $html->find('article', 0);
-    $article_url = $posts->find('a', 0)->href;
-    $article_html = file_get_html($article_url);
-
-    return strtotime($article_html->find('meta[property=article:published_time]', 0)->content);
-}
-
-function getTitle($url, $category): string
-{
-    $html = file_get_html($url . $category);
-    $posts = $html->find('article', 0);
-
-    return trim($posts->find('h3', 0)->plaintext);
-}
-
-function template($post, $latest_id = null): array
-{
-    // ID
-    if ($latest_id !== null) {
-        $item['id'] = $latest_id + 1;
-    }
-
     // URL
     $item['url'] = $post->find('a', 0)->href;
 
@@ -112,6 +98,5 @@ function template($post, $latest_id = null): array
     $item['body'] = $post_html->find('//div[@class="box box--fill-height"]', 0)->innertext;
     $item['body'] = str_replace($search, $replace, $item['body']);
 
-    echo $item['title'] . "\n";
     return $item;
 }

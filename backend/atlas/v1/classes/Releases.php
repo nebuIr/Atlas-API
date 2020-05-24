@@ -42,14 +42,6 @@ class Releases
         return $stmt->get_result()->num_rows;
     }
 
-    public function getLatestResult()
-    {
-        $stmt = $this->conn->prepare("SELECT * FROM releases ORDER BY id DESC LIMIT 1");
-        $stmt->execute();
-
-        return $stmt->get_result();
-    }
-
     public function getResultByID($id)
     {
         $stmt = $this->conn->prepare("SELECT * FROM releases WHERE id = ?");
@@ -71,9 +63,31 @@ class Releases
         return $row[$field];
     }
 
-    public function getFieldFromLatestResult($field)
+    public function getResultByURL($url)
     {
-        $row = $this->getLatestResult()->fetch_assoc();
+        $stmt = $this->conn->prepare("SELECT * FROM releases WHERE url = ?");
+        if (!$stmt) {
+            return false;
+        }
+        $stmt->bind_param('s', $url);
+        $stmt->execute();
+
+        return $stmt->get_result();
+    }
+
+    public function getRowByURL($url)
+    {
+        $result = $this->getResultByURL($url);
+        if ($result) {
+            return $result->fetch_assoc();
+        }
+
+        return false;
+    }
+
+    public function getFieldByURL($field, $url)
+    {
+        $row = $this->getRowByURL($url);
 
         return $row[$field] ?? 0;
     }
@@ -88,6 +102,7 @@ class Releases
                 $output['id'] = (int) $row['id'];
                 $output['url'] = $row['url'];
                 $output['title'] = $row['title'];
+                $output['timestamp'] = $row['timestamp'];
                 $output['platforms']['pc'] = (bool)$row['platform_pc'];
                 $output['platforms']['ps4'] = (bool)$row['platform_ps4'];
                 $output['platforms']['xbox'] = (bool)$row['platform_xbox'];
@@ -131,15 +146,23 @@ class Releases
 
     public function addSQLEntry($item): void
     {
-        $stmt = $this->conn->prepare('INSERT INTO releases (id, url, title, platform_pc, platform_ps4, platform_xbox, excerpt, image, body) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
-        $stmt->bind_param('issiiisss', $item['id'], $item['url'], $item['title'], $item['platforms']['pc'], $item['platforms']['ps4'], $item['platforms']['xbox'], $item['excerpt'], $item['image'], $item['body']);
-        $stmt->execute();
+        $stmt = $this->conn->prepare('INSERT INTO releases (id, url, title, timestamp, platform_pc, platform_ps4, platform_xbox, excerpt, image, body) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $stmt->bind_param('issiiiisss', $item['id'], $item['url'], $item['title'], $item['timestamp'], $item['platforms']['pc'], $item['platforms']['ps4'], $item['platforms']['xbox'], $item['excerpt'], $item['image'], $item['body']);
+        if ($stmt->execute()) {
+            echo 'Item added to DB: ' . $item['title'] . "\n";
+        } else {
+            echo 'Import failed';
+        }
     }
 
     public function updateSQLEntry($item): void
     {
-        $stmt = $this->conn->prepare('UPDATE releases SET url=?, title=?, platform_pc=?, platform_ps4=?, platform_xbox=?, excerpt=?, image=?, body=? WHERE id=?');
-        $stmt->bind_param('ssiiisssi', $item['url'], $item['title'], $item['platforms']['pc'], $item['platforms']['ps4'], $item['platforms']['xbox'], $item['excerpt'], $item['image'], $item['body'], $item['id']);
-        $stmt->execute();
+        $stmt = $this->conn->prepare('UPDATE releases SET url = ?, title = ?, timestamp = ?, platform_pc = ?, platform_ps4 = ?, platform_xbox = ?, excerpt = ?, image = ?, body = ? WHERE id = ?');
+        $stmt->bind_param('ssiiiisssi', $item['url'], $item['title'], $item['timestamp'], $item['platforms']['pc'], $item['platforms']['ps4'], $item['platforms']['xbox'], $item['excerpt'], $item['image'], $item['body'], $item['id']);
+        if ($stmt->execute()) {
+            echo 'Item in DB updated: ' . $item['title'] . "\n";
+        } else {
+            echo 'Import failed';
+        }
     }
 }

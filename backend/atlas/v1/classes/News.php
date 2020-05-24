@@ -42,14 +42,6 @@ class News
         return $stmt->get_result()->num_rows;
     }
 
-    public function getLatestResult()
-    {
-        $stmt = $this->conn->prepare("SELECT * FROM news ORDER BY id DESC LIMIT 1");
-        $stmt->execute();
-
-        return $stmt->get_result();
-    }
-
     public function getResultByID($id)
     {
         $stmt = $this->conn->prepare("SELECT * FROM news WHERE id = ?");
@@ -71,9 +63,31 @@ class News
         return $row[$field];
     }
 
-    public function getFieldFromLatestResult($field)
+    public function getResultByTimestamp($timestamp)
     {
-        $row = $this->getLatestResult()->fetch_assoc();
+        $stmt = $this->conn->prepare("SELECT * FROM news WHERE timestamp = ?");
+        if (!$stmt) {
+            return false;
+        }
+        $stmt->bind_param('i', $timestamp);
+        $stmt->execute();
+
+        return $stmt->get_result();
+    }
+
+    public function getRowByTimestamp($timestamp)
+    {
+        $result = $this->getResultByTimestamp($timestamp);
+        if ($result) {
+            return $result->fetch_assoc();
+        }
+
+        return false;
+    }
+
+    public function getFieldByTimestamp($field, $timestamp)
+    {
+        $row = $this->getRowByTimestamp($timestamp);
 
         return $row[$field] ?? 0;
     }
@@ -132,13 +146,21 @@ class News
     {
         $stmt = $this->conn->prepare('INSERT INTO news (id, url, title, timestamp, excerpt, image, image_small, body) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
         $stmt->bind_param('ississss', $item['id'], $item['url'], $item['title'], $item["timestamp"], $item['excerpt'], $item['image'], $item['image_small'], $item['body']);
-        $stmt->execute();
+        if ($stmt->execute()) {
+            echo 'Item added to DB: ' . $item['title'] . "\n";
+        } else {
+            echo 'Import failed';
+        }
     }
 
     public function updateSQLEntry($item): void
     {
-        $stmt = $this->conn->prepare('UPDATE news SET url=?, title=?, excerpt=?, image=?, image_small=?, body=? WHERE id=?');
-        $stmt->bind_param('ssssssi', $item['url'], $item['title'], $item['excerpt'], $item['image'], $item['image_small'], $item['body'], $item['id']);
-        $stmt->execute();
+        $stmt = $this->conn->prepare('UPDATE news SET url = ?, title = ?, timestamp = ?, excerpt = ?, image = ?, image_small = ?, body = ? WHERE id = ?');
+        $stmt->bind_param('ssssssi', $item['url'], $item['title'], $item['timestamp'], $item['excerpt'], $item['image'], $item['image_small'], $item['body'], $item['id']);
+        if ($stmt->execute()) {
+            echo 'Item in DB updated: ' . $item['title'] . "\n";
+        } else {
+            echo 'Import failed';
+        }
     }
 }

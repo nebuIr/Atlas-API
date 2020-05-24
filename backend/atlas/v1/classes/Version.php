@@ -24,7 +24,7 @@ class Version
         }
     }
 
-    public function getSQL()
+    public function getItems()
     {
         $stmt = $this->conn->prepare('SELECT * FROM version');
         $stmt->execute();
@@ -36,7 +36,7 @@ class Version
 
     public function getJSONFromSQL(): array
     {
-        $result = $this->getSQL();
+        $result = $this->getItems();
 
         $output = array();
         $return_arr = array();
@@ -56,29 +56,37 @@ class Version
 
     public function SQLImport($item): void
     {
-        $result = $this->getSQL();
+        $result = $this->getItems();
         $row_count = $result->num_rows;
 
         if ($row_count) {
             if ($row_count === 1) {
-                $this->updateSQLEntries($item);
+                $this->updateSQLEntry($item);
             }
         } else {
-            $this->addSQLEntries($item);
+            $this->addSQLEntry($item);
         }
     }
 
-    public function addSQLEntries($item): void
+    public function addSQLEntry($item): void
     {
         $stmt = $this->conn->prepare('INSERT INTO version (id, url, version, timestamp) VALUES (?, ?, ?, ?)');
         $stmt->bind_param('issi', $item['id'], $item['url'], $item['version'], $item['timestamp']);
-        $stmt->execute();
+        if ($stmt->execute()) {
+            echo 'Version added to DB: ' . $item['version'] . "\n";
+        } else {
+            echo 'Import failed';
+        }
     }
 
-    public function updateSQLEntries($item): void
+    public function updateSQLEntry($item): void
     {
         $stmt = $this->conn->prepare('UPDATE version SET url = ?, version = ?, timestamp = ? WHERE id = ?');
         $stmt->bind_param('ssii', $item['url'], $item['version'], $item['timestamp'], $item['id']);
-        $stmt->execute();
+        if ($stmt->execute()) {
+            echo 'Version in DB updated: ' . $item['version'] . "\n";
+        } else {
+            echo 'Import failed';
+        }
     }
 }

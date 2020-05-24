@@ -1,24 +1,31 @@
 <?php
-require_once __DIR__ . '/../../../lib/simple_html_dom.php';
 
-function getRelease($url, $category, $latest_id = null, $single = true)
+function getRelease($url, $category)
 {
+    $releases = new Releases();
     $html = file_get_html($url . $category);
     $posts = $html->find('div.grid__cell');
-
-    if ($single) {
-        return template($posts[0], $latest_id);
-    }
-
     $items = [];
+
     foreach ($posts as $post) {
-        $items[] = template($post, null);
+        $item = templateReleases($post);
+
+        if ($releases->getFieldByURL('url', $item['url'])) {
+            if (!count($items)) {
+                echo "No new releases found.\n";
+            }
+            break;
+        }
+
+        echo 'Item added to array: ' . $item['title'] . "\n";
+        $items[] = $item;
     }
 
+    $db_count = $releases->getItemCount();
     $count = count($items);
     $result = [];
     foreach ($items as $item) {
-        $item['id'] = $count;
+        $item['id'] = $count + $db_count;
         $result[] = $item;
         --$count;
     }
@@ -26,21 +33,8 @@ function getRelease($url, $category, $latest_id = null, $single = true)
     return $result;
 }
 
-function getTitle($url, $category): string
+function templateReleases($post): array
 {
-    $html = file_get_html($url . $category);
-    $posts = $html->find('div.grid__cell', 0);
-
-    return trim($posts->find('h2', 0)->plaintext);
-}
-
-function template($post, $latest_id = null): array
-{
-    // ID
-    if ($latest_id !== null) {
-        $item['id'] = $latest_id + 1;
-    }
-
     // URL
     $item['url'] = $post->find('a', 0)->href;
     $baseUri = 'www.nomanssky.com';
@@ -50,13 +44,17 @@ function template($post, $latest_id = null): array
     }
 
     // Post
-    $article_html = file_get_html($item['url']);
+    $post_html = file_get_html($item['url']);
 
     // Title
     $search = ['&#8217;', '&#8211;', ' View Article', '&nbsp;', '’', '–', '\u00a0'];
     $replace = ['\'', '–', '', '', '\'', '-', ''];
     $item['title'] = $post->find('h2', 0)->plaintext;
     $item['title'] = str_replace($search, $replace, $item['title']);
+
+    // Timestamp
+    $item['timestamp'] = $post_html->find('meta[property=article:published_time]', 0)->content ?? 0;
+    $item['timestamp'] = strtotime($item['timestamp']);
 
     // Platforms
     //PC
@@ -95,15 +93,14 @@ function template($post, $latest_id = null): array
     // Image
     $search = ['http://'];
     $replace = ['https://'];
-    $item['image'] = $article_html->find('meta[property=og:image]', 0)->content;
+    $item['image'] = $post_html->find('meta[property=og:image]', 0)->content;
     $item['image'] = str_replace($search, $replace, $item['image']);
 
     // Body
     $search = ['src=\"/wp-content', '&#8217;', '&#8211;', '&nbsp;', '’', '–', '\u00a0', "'", "\t", '     ', 'href=\"/', "\\\\'", "\t"];
     $replace = ['src=\"https://www.nomanssky.com/wp-content', '\'', '–', '', '\'', '-', '', '\'', '', '', 'href=\"https://www.nomanssky.com/', '\'', ''];
-    $item['body'] = $article_html->find('//div[@class="box box--fill-height"]', 0)->innertext;
+    $item['body'] = $post_html->find('//div[@class="box box--fill-height"]', 0)->innertext;
     $item['body'] = str_replace($search, $replace, $item['body']);
 
-    echo $item['title'] . "\n";
     return $item;
 }
