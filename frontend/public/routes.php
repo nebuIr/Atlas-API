@@ -1,91 +1,82 @@
 <?php
 switch($section[1])
 {
-    case 'atlas':
+    case 'v1':
         switch($section[2])
         {
-            case 'v1':
+            case 'news':
+                require_once __DIR__ . '/../../backend/v1/classes/News.php';
+                $data = new News();
                 switch($section[3])
                 {
-                    case 'news':
-                        require_once __DIR__ . '/../../backend/atlas/v1/classes/News.php';
-                        $data = new News();
-                        switch($section[4])
-                        {
-                            case '':
-                                header('Content-Type: application/json');
-                                if (isset($_GET['order'])) {
-                                    if ('desc' === $_GET['order'] || 'asc' === $_GET['order']) {
-                                        echo json_encode($data->getJSONFromSQL($data->getItems($_GET['order']), false, $_GET));
-                                    }
-                                } else {
-                                    echo json_encode($data->getJSONFromSQL($data->getItems(), false, $_GET));
-                                }
-                                break;
-
-                            case ((bool)preg_match('/^\d+$/', $section[4]) === true):
-                                header('Content-Type: application/json');
-                                echo json_encode($data->getJSONFromSQL($data->getResultByID($section[4]),false, $_GET));
-                                break;
-
-                            case 'latest':
-                                header('Content-Type: application/json');
-                                echo json_encode($data->getJSONFromSQL($data->getItems(),true, $_GET));
-                                break;
-
-                            default:
-                                errorInvalid();
-                                break;
+                    case '':
+                        header('Content-Type: application/json');
+                        if (isset($_GET['order'])) {
+                            if ('desc' === $_GET['order'] || 'asc' === $_GET['order']) {
+                                echo json_encode($data->getJSONFromSQL($data->getItems($_GET['order']), false, $_GET));
+                            }
+                        } else {
+                            echo json_encode($data->getJSONFromSQL($data->getItems(), false, $_GET));
                         }
                         break;
 
-                    case 'releases':
-                        require_once __DIR__ . '/../../backend/atlas/v1/classes/Releases.php';
-                        $data = new Releases();
-                        switch($section[4])
-                        {
-                            case '':
-                                header('Content-Type: application/json');
-                                if (isset($_GET['order'])) {
-                                    if ('desc' === $_GET['order'] || 'asc' === $_GET['order']) {
-                                        echo json_encode($data->getJSONFromSQL($data->getItems($_GET['order']), false, $_GET));
-                                    }
-                                } else {
-                                    echo json_encode($data->getJSONFromSQL($data->getItems(), false, $_GET));
-                                }
-                                break;
+                    case ((bool)preg_match('/^\d+$/', $section[3]) === true):
+                        header('Content-Type: application/json');
+                        echo json_encode($data->getJSONFromSQL($data->getResultByID($section[3]),false, $_GET));
+                        break;
 
-                            case ((bool)preg_match('/^\d+$/', $section[4]) === true):
-                                header('Content-Type: application/json');
-                                echo json_encode($data->getJSONFromSQL($data->getResultbyId($section[4]),false, $_GET));
-                                break;
+                    case 'latest':
+                        header('Content-Type: application/json');
+                        echo json_encode($data->getJSONFromSQL($data->getItems(),true, $_GET));
+                        break;
 
-                            case 'latest':
-                                header('Content-Type: application/json');
-                                $params = ['latest' => true];
-                                echo json_encode($data->getJSONFromSQL($data->getItems(), true, $_GET));
-                                break;
+                    default:
+                        errorInvalid();
+                        break;
+                }
+                break;
 
-                            default:
-                                errorInvalid();
-                                break;
+            case 'releases':
+                require_once __DIR__ . '/../../backend/v1/classes/Releases.php';
+                $data = new Releases();
+                switch($section[3])
+                {
+                    case '':
+                        header('Content-Type: application/json');
+                        if (isset($_GET['order'])) {
+                            if ('desc' === $_GET['order'] || 'asc' === $_GET['order']) {
+                                echo json_encode($data->getJSONFromSQL($data->getItems($_GET['order']), false, $_GET));
+                            }
+                        } else {
+                            echo json_encode($data->getJSONFromSQL($data->getItems(), false, $_GET));
                         }
                         break;
 
-                    case 'version':
-                        require_once __DIR__ . '/../../backend/atlas/v1/classes/Version.php';
-                        $data = new Version();
-                        switch($section[4])
-                        {
-                            case '':
-                                header('Content-Type: application/json');
-                                echo json_encode($data->getJSONFromSQL());
-                                break;
+                    case ((bool)preg_match('/^\d+$/', $section[3]) === true):
+                        header('Content-Type: application/json');
+                        echo json_encode($data->getJSONFromSQL($data->getResultbyId($section[3]),false, $_GET));
+                        break;
 
-                            default:
-                                errorInvalid();
-                                break;
-                        }
+                    case 'latest':
+                        header('Content-Type: application/json');
+                        $params = ['latest' => true];
+                        echo json_encode($data->getJSONFromSQL($data->getItems(), true, $_GET));
+                        break;
+
+                    default:
+                        errorInvalid();
+                        break;
+                }
+                break;
+
+            case 'version':
+                require_once __DIR__ . '/../../backend/v1/classes/Version.php';
+                $data = new Version();
+                switch($section[3])
+                {
+                    case '':
+                        header('Content-Type: application/json');
+                        echo json_encode($data->getJSONFromSQL());
                         break;
 
                     default:
@@ -107,7 +98,7 @@ switch($section[1])
 
 function errorInvalid() {
     header('Content-Type: application/json');
-    echo json_encode(['error' => 'Invalid URL', 'description' => 'Invalid URL provided. Please refer to the documentation: ' . getURL() . '/docs/atlas/v1/']);
+    echo json_encode(['error' => 'Invalid URL', 'description' => 'Invalid URL provided. Please refer to the documentation: ' . getURL() . '/docs/v1/']);
 }
 
 function getURL(): string

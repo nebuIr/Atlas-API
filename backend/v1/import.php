@@ -7,7 +7,7 @@ if (!isset($argv[1])) {
     throw new RuntimeException('Please provide a category [news, releases, version, all]');
 }
 
-require_once __DIR__ . '/../../lib/simple_html_dom.php';
+require_once __DIR__ . '/../lib/simple_html_dom.php';
 
 // Configuration
 $url = 'https://www.nomanssky.com/';

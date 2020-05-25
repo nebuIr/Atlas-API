@@ -3,6 +3,10 @@ RewriteBase /
 Options -Indexes
 DirectoryIndex index.php
 
+RewriteEngine On
+RewriteRule ^docs/atlas/(.*)$ /docs/$1 [R=301,NC,L]
+RewriteRule ^atlas/(.*)$ /$1 [R=301,NC,L]
+
 <IfModule mod_rewrite.c>
 	RewriteCond %{REQUEST_URI} /+[^\.]+$
 	RewriteRule ^(.+[^/])$ %{REQUEST_URI}/ [R=301,L]

@@ -8,9 +8,9 @@ class Version
 
     public function __construct()
     {
-        require_once __DIR__ . '/../../../../vendor/autoload.php';
+        require_once __DIR__ . '/../../../vendor/autoload.php';
 
-        $dotenv = Dotenv::create(__DIR__ . '/../../../../');
+        $dotenv = Dotenv::create(__DIR__ . '/../../../');
         $dotenv->load();
 
         $db_host = getenv('DB_HOST');
