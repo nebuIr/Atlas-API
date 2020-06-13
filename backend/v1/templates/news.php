@@ -97,6 +97,9 @@ function templateNews($post): array
     $replace = ['src=\"https://www.nomanssky.com/wp-content', '\'', '–', '', '\'', '-', '', '\'', '', 'href=\"https://www.nomanssky.com/', '\'', ''];
     $item['body'] = $post_html->find('//div[@class="box box--fill-height"]', 0)->innertext;
     $item['body'] = str_replace($search, $replace, $item['body']);
+    $search = ['/<h1 class=\"text--heading-centered .*\">.*<\/h1>/', '/<div class=\"post-meta text--centered.*\">[\s\S].*\s<\/div>/'];
+    $replace = ['', ''];
+    $item['body'] = preg_replace($search, $replace, $item['body']);
 
     return $item;
 }
