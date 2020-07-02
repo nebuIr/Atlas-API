@@ -25,7 +25,7 @@
 <script>
     window.onload = function () {
         window.ui = SwaggerUIBundle({
-            url: "atlas.json",
+            url: "atlas.yaml",
             dom_id: '#swagger-ui',
             deepLinking: true,
             presets: [
