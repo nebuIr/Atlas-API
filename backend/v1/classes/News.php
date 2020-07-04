@@ -118,6 +118,11 @@ class News
             return $return_arr[0];
         }
 
+        if ((array_key_exists('offset', $params) && (bool)preg_match('/^\d+$/', $params['offset']) === false)
+            || (array_key_exists('limit', $params) && (bool)preg_match('/^\d+$/', $params['limit']) === false)) {
+            return [];
+        }
+
         if (!array_key_exists('offset', $params) || $params['offset'] < 0) {
             $params['offset'] = 0;
         }

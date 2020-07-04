@@ -11,9 +11,14 @@ switch($section[1])
                 {
                     case '':
                         header('Content-Type: application/json');
+                        isInt(['limit', 'offset']);
                         if (isset($_GET['order'])) {
                             if ('desc' === $_GET['order'] || 'asc' === $_GET['order']) {
                                 echo json_encode($data->getJSONFromSQL($data->getItems($_GET['order']), false, $_GET));
+                            } else if (empty($_GET['order'])) {
+                                echo json_encode($data->getJSONFromSQL($data->getItems(), false, $_GET));
+                            } else {
+                                error(3, 'order', $_GET['order']);
                             }
                         } else {
                             echo json_encode($data->getJSONFromSQL($data->getItems(), false, $_GET));
@@ -30,8 +35,12 @@ switch($section[1])
                         echo json_encode($data->getJSONFromSQL($data->getItems(),true, $_GET));
                         break;
 
+                    case $section[3] !== 'latest':
+                        error(1, 'id', $section[3]);
+                        break;
+
                     default:
-                        errorInvalid();
+                        error(0);
                         break;
                 }
                 break;
@@ -43,9 +52,14 @@ switch($section[1])
                 {
                     case '':
                         header('Content-Type: application/json');
+                        isInt(['limit', 'offset']);
                         if (isset($_GET['order'])) {
                             if ('desc' === $_GET['order'] || 'asc' === $_GET['order']) {
                                 echo json_encode($data->getJSONFromSQL($data->getItems($_GET['order']), false, $_GET));
+                            } else if (empty($_GET['order'])) {
+                                echo json_encode($data->getJSONFromSQL($data->getItems(), false, $_GET));
+                            } else {
+                                error(3, 'order', $_GET['order']);
                             }
                         } else {
                             echo json_encode($data->getJSONFromSQL($data->getItems(), false, $_GET));
@@ -63,8 +77,12 @@ switch($section[1])
                         echo json_encode($data->getJSONFromSQL($data->getItems(), true, $_GET));
                         break;
 
+                    case $section[3] !== 'latest':
+                        error(1, 'id', $section[3]);
+                        break;
+
                     default:
-                        errorInvalid();
+                        error(0);
                         break;
                 }
                 break;
@@ -80,13 +98,13 @@ switch($section[1])
                         break;
 
                     default:
-                        errorInvalid();
+                        error(0);
                         break;
                 }
                 break;
 
             default:
-                errorInvalid();
+                error(0);
                 break;
         }
         break;
@@ -96,9 +114,25 @@ switch($section[1])
         break;
 }
 
-function errorInvalid() {
+function isInt($input) {
+    foreach ($input as $item) {
+        if (isset($_GET[$item])) {
+            if ((bool)preg_match('/^\d+$/', $_GET[$item]) === false) {
+                error(2, $item, $_GET[$item]);
+            }
+        }
+    }
+}
+
+function error($type, $variable = null, $input = null) {
+    $errors = [
+        ['error' => 'Invalid URL', 'description' => 'Invalid URL provided. Please refer to the documentation: ' . getURL() . '/docs/v1/'],
+        ['error' => 'Invalid type', 'description' => 'The path variable \'' . $variable . '\' needs to be of type integer, but we found \'' . $input . '\''],
+        ['error' => 'Invalid type', 'description' => 'The query parameter \'' . $variable . '\' needs to be of type integer, but we found \'' . $input . '\''],
+        ['error' => 'Invalid type', 'description' => 'The query parameter \'' . $variable . '\' needs to be of either \'desc\' or \'asc\', but we found \'' . $input . '\'']
+    ];
     header('Content-Type: application/json');
-    echo json_encode(['error' => 'Invalid URL', 'description' => 'Invalid URL provided. Please refer to the documentation: ' . getURL() . '/docs/v1/']);
+    echo json_encode($errors[$type]);
 }
 
 function getURL(): string
