@@ -13,6 +13,7 @@ function getNews($url, $category): array
                 if (error_reporting() === 0) {
                     return false;
                 }
+
                 throw new ErrorException($err_msg, 0, $err_severity, $err_file, $err_line);
             },
             E_WARNING

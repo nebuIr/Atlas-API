@@ -2,9 +2,9 @@
 $params = explode('/', strtok($_SERVER["REQUEST_URI"], '?'));
 
 if (array_key_exists(1, $params)) {
-$section = $params;
+    $section = $params;
 } else {
-$section = '';
+    $section = '';
 }
 
 include __DIR__ . '/routes.php';

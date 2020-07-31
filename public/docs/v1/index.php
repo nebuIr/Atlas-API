@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Atlas API</title>
-    <link rel="stylesheet" type="text/css" href="../assets/css/base.css">
+    <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/swagger-ui.css">
 
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon/apple-touch-icon.png">

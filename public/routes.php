@@ -5,7 +5,7 @@ switch($section[1])
         switch($section[2])
         {
             case 'news':
-                require_once __DIR__ . '/../../backend/v1/classes/News.php';
+                require_once __DIR__ . '/../src/v1/classes/News.php';
                 $data = new News();
                 switch($section[3])
                 {
@@ -46,7 +46,7 @@ switch($section[1])
                 break;
 
             case 'releases':
-                require_once __DIR__ . '/../../backend/v1/classes/Releases.php';
+                require_once __DIR__ . '/../src/v1/classes/Releases.php';
                 $data = new Releases();
                 switch($section[3])
                 {
@@ -88,18 +88,14 @@ switch($section[1])
                 break;
 
             case 'version':
-                require_once __DIR__ . '/../../backend/v1/classes/Version.php';
+                require_once __DIR__ . '/../src/v1/classes/Version.php';
                 $data = new Version();
-                switch($section[3])
-                {
-                    case '':
-                        header('Content-Type: application/json');
-                        echo json_encode($data->getJSONFromSQL());
-                        break;
+                if ($section[3] === '') {
+                    header('Content-Type: application/json');
 
-                    default:
-                        error(0);
-                        break;
+                    echo json_encode($data->getJSONFromSQL());
+                } else {
+                    error(0);
                 }
                 break;
 
@@ -110,16 +106,14 @@ switch($section[1])
         break;
 
     default:
-        include_once __DIR__ . '/../pages/frontpage.php';
+        include_once __DIR__ . '/../src/pages/home.php';
         break;
 }
 
 function isInt($input) {
     foreach ($input as $item) {
-        if (isset($_GET[$item])) {
-            if ((bool)preg_match('/^\d+$/', $_GET[$item]) === false) {
-                error(2, $item, $_GET[$item]);
-            }
+        if (isset($_GET[$item]) && (bool)preg_match('/^\d+$/', $_GET[$item]) === false) {
+            error(2, $item, $_GET[$item]);
         }
     }
 }

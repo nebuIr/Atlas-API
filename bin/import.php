@@ -7,7 +7,7 @@ if (!isset($argv[1])) {
     throw new RuntimeException('Please provide a category [news, releases, version, all]');
 }
 
-require_once __DIR__ . '/../lib/simple_html_dom.php';
+require_once __DIR__ . '/../src/lib/simple_html_dom.php';
 
 // Configuration
 $url = 'https://www.nomanssky.com/';
@@ -30,8 +30,8 @@ switch ($argv[1]) {
 }
 
 function importNews($url) {
-    require_once __DIR__ . '/classes/News.php';
-    require_once __DIR__ . '/templates/news.php';
+    require_once __DIR__ . '/../src/v1/classes/News.php';
+    require_once __DIR__ . '/../src/v1/templates/news.php';
 
     $news = new News();
     $items = getNews($url, 'news');
@@ -42,8 +42,8 @@ function importNews($url) {
 }
 
 function importReleases($url) {
-    require_once __DIR__ . '/classes/Releases.php';
-    require_once __DIR__ . '/templates/releases.php';
+    require_once __DIR__ . '/../src/v1/classes/Releases.php';
+    require_once __DIR__ . '/../src/v1/templates/releases.php';
 
     $releases = new Releases();
     $items = getRelease($url, 'release-log');
@@ -54,8 +54,8 @@ function importReleases($url) {
 }
 
 function importVersion() {
-    require_once __DIR__ . '/classes/Version.php';
-    require_once __DIR__ . '/templates/version.php';
+    require_once __DIR__ . '/../src/v1/classes/Version.php';
+    require_once __DIR__ . '/../src/v1/templates/version.php';
 
     $version = new Version();
     $url = 'https://nomanssky.gamepedia.com/';

@@ -4,7 +4,7 @@
 
 <head>
     <title>Atlas API</title>
-    <?php include($_SERVER['DOCUMENT_ROOT'] . '/assets/html/head.php'); ?>
+    <?php include(__DIR__ . '/../../public/assets/html/head.php'); ?>
 </head>
 
 <body>
@@ -14,8 +14,6 @@
 
     <div class="center"><a href="/docs/v1">Documentation</a></div>
 </main>
-
-<?php include($_SERVER['DOCUMENT_ROOT'] . '/assets/html/footer.php'); ?>
 
 </body>
 
