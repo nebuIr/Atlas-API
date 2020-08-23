@@ -83,6 +83,13 @@ function templateReleases($post): array
         $item['platforms']['xbox'] = (int) false;
     }
 
+    //MICROSOFT STORE
+    if ($post->find('div[style=margin-left:0;background-color:grey;]')) {
+        $item['platforms']['ms-store'] = (int) true;
+    } else {
+        $item['platforms']['ms-store'] = (int) false;
+    }
+
     // Excerpt
     $search = ['&#8217;', '&#8211;', "\r\n             Read more", "\r\n          Read more", "&nbsp;", "’", "–", "\xE2\x80\xA6", "&#8230;", "            ", "           "];
     $replace = ['’', '-', '', '', '', '\'', '-', '...', '...', '', ''];

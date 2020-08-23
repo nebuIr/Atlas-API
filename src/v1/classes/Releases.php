@@ -106,6 +106,7 @@ class Releases
                 $output['platforms']['pc'] = (bool)$row['platform_pc'];
                 $output['platforms']['ps4'] = (bool)$row['platform_ps4'];
                 $output['platforms']['xbox'] = (bool)$row['platform_xbox'];
+                $output['platforms']['ms-store'] = (bool)$row['platform_ms_store'];
                 $output['images']['image_large'] = $row['image'];
                 $output['excerpt'] = $row['excerpt'];
                 $output['body'] = $row['body'];
@@ -151,8 +152,8 @@ class Releases
 
     public function addSQLEntry($item): void
     {
-        $stmt = $this->conn->prepare('INSERT INTO releases (id, url, title, timestamp, platform_pc, platform_ps4, platform_xbox, excerpt, image, body) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-        $stmt->bind_param('issiiiisss', $item['id'], $item['url'], $item['title'], $item['timestamp'], $item['platforms']['pc'], $item['platforms']['ps4'], $item['platforms']['xbox'], $item['excerpt'], $item['image'], $item['body']);
+        $stmt = $this->conn->prepare('INSERT INTO releases (id, url, title, timestamp, platform_pc, platform_ps4, platform_xbox, platform_ms_store, excerpt, image, body) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $stmt->bind_param('issiiiiisss', $item['id'], $item['url'], $item['title'], $item['timestamp'], $item['platforms']['pc'], $item['platforms']['ps4'], $item['platforms']['xbox'], $item['platforms']['ms-store'], $item['excerpt'], $item['image'], $item['body']);
         if ($stmt->execute()) {
             echo 'Item added to DB: ' . $item['title'] . "\n";
         } else {
@@ -162,8 +163,8 @@ class Releases
 
     public function updateSQLEntry($item): void
     {
-        $stmt = $this->conn->prepare('UPDATE releases SET url = ?, title = ?, timestamp = ?, platform_pc = ?, platform_ps4 = ?, platform_xbox = ?, excerpt = ?, image = ?, body = ? WHERE id = ?');
-        $stmt->bind_param('ssiiiisssi', $item['url'], $item['title'], $item['timestamp'], $item['platforms']['pc'], $item['platforms']['ps4'], $item['platforms']['xbox'], $item['excerpt'], $item['image'], $item['body'], $item['id']);
+        $stmt = $this->conn->prepare('UPDATE releases SET url = ?, title = ?, timestamp = ?, platform_pc = ?, platform_ps4 = ?, platform_xbox = ?, platform_ms_store = ?, excerpt = ?, image = ?, body = ? WHERE id = ?');
+        $stmt->bind_param('ssiiiiisssi', $item['url'], $item['title'], $item['timestamp'], $item['platforms']['pc'], $item['platforms']['ps4'], $item['platforms']['xbox'], $item['platforms']['ms-store'], $item['excerpt'], $item['image'], $item['body'], $item['id']);
         if ($stmt->execute()) {
             echo 'Item in DB updated: ' . $item['title'] . "\n";
         } else {

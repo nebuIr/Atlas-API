@@ -7,7 +7,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.1.1
+  version: 1.1.2
 servers:
 - url: https://api.atlasapp.info/v1
   description: Atlas API
@@ -257,6 +257,9 @@ components:
           type: boolean
           example: false
         xbox:
+          type: boolean
+          example: false
+        ms-store:
           type: boolean
           example: false
       xml:

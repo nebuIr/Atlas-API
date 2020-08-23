@@ -1,6 +1,6 @@
--- Generation Time: Jul 31, 2020 at 10:59 PM
+-- Generation Time: Aug 23, 2020 at 08:07 PM
 -- Server version: 5.7.31
--- PHP Version: 7.4.8
+-- PHP Version: 7.4.9
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -50,6 +50,7 @@ CREATE TABLE `releases` (
   `platform_pc` tinyint(1) NOT NULL,
   `platform_ps4` tinyint(1) NOT NULL,
   `platform_xbox` tinyint(1) NOT NULL,
+  `platform_ms_store` tinyint(1) NOT NULL,
   `excerpt` varchar(500) NOT NULL,
   `image` varchar(200) NOT NULL,
   `body` mediumtext NOT NULL,
