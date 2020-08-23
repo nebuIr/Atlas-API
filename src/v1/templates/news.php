@@ -29,7 +29,7 @@ function getNews($url, $category): array
                     if (!count($items)) {
                         echo "No new news found.\n";
                     }
-                    throw new Exception('Item already in DB');
+                    throw new \RuntimeException('Item already in DB');
                 }
 
                 echo 'Item added to array: ' . $item['title'] . "\n";

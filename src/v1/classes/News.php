@@ -168,4 +168,14 @@ class News
             echo 'Import failed';
         }
     }
+
+    public function clearTable(): void
+    {
+        $stmt = $this->conn->prepare('DELETE FROM news');
+        if ($stmt->execute()) {
+            echo "Table cleared\n";
+        } else {
+            echo "Clearing failed";
+        }
+    }
 }

@@ -171,4 +171,14 @@ class Releases
             echo 'Import failed';
         }
     }
+
+    public function clearTable(): void
+    {
+        $stmt = $this->conn->prepare('DELETE FROM releases');
+        if ($stmt->execute()) {
+            echo "Table cleared\n";
+        } else {
+            echo "Clearing failed";
+        }
+    }
 }

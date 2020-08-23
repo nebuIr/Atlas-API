@@ -12,21 +12,56 @@ require_once __DIR__ . '/../src/lib/simple_html_dom.php';
 // Configuration
 $url = 'https://www.nomanssky.com/';
 
-switch ($argv[1]) {
-    case 'news':
-        importNews($url);
+switch ($argv[2] ?? '') {
+    case '':
+    case 'import':
+        import($argv[1], $url);
         break;
-    case 'releases':
-        importReleases($url);
+    case 'reimport':
+        clear($argv[1]);
+        import($argv[1], $url);
         break;
-    case 'version':
-        importVersion();
+    case 'clear':
+        clear($argv[1]);
         break;
-    case 'all':
-        importNews($url);
-        importReleases($url);
-        importVersion();
-        break;
+}
+
+function import($category, $url) {
+    switch ($category) {
+        case 'news':
+            importNews($url);
+            break;
+        case 'releases':
+            importReleases($url);
+            break;
+        case 'version':
+            importVersion();
+            break;
+        case 'all':
+            importNews($url);
+            importReleases($url);
+            importVersion();
+            break;
+    }
+}
+
+function clear($category) {
+    switch ($category) {
+        case 'news':
+            clearNews();
+            break;
+        case 'releases':
+            clearReleases();
+            break;
+        case 'version':
+            clearVersion();
+            break;
+        case 'all':
+            clearNews();
+            clearReleases();
+            clearVersion();
+            break;
+    }
 }
 
 function importNews($url) {
@@ -61,4 +96,25 @@ function importVersion() {
     $url = 'https://nomanssky.gamepedia.com/';
 
     $version->SQLImport(getVersion($url));
+}
+
+function clearNews() {
+    require_once __DIR__ . '/../src/v1/classes/News.php';
+
+    $news = new News();
+    $news->clearTable();
+}
+
+function clearReleases() {
+    require_once __DIR__ . '/../src/v1/classes/Releases.php';
+
+    $news = new Releases();
+    $news->clearTable();
+}
+
+function clearVersion() {
+    require_once __DIR__ . '/../src/v1/classes/Version.php';
+
+    $news = new Version();
+    $news->clearTable();
 }

@@ -89,4 +89,14 @@ class Version
             echo 'Import failed';
         }
     }
+
+    public function clearTable(): void
+    {
+        $stmt = $this->conn->prepare('DELETE FROM version');
+        if ($stmt->execute()) {
+            echo "Table cleared\n";
+        } else {
+            echo "Clearing failed";
+        }
+    }
 }
