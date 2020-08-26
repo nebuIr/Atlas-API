@@ -1,9 +1,16 @@
 <?php
 
+use simplehtmldom\HtmlWeb;
+
 function getRelease($url, $category)
 {
     $releases = new Releases();
-    $html = file_get_html($url . $category);
+    $html = (new HtmlWeb())->load($url . $category);
+
+    if (!$html) {
+        throw new RuntimeException('An error occurred trying to load ' . $url . $category);
+    }
+
     $posts = $html->find('div.grid__cell');
     $items = [];
 
@@ -14,6 +21,7 @@ function getRelease($url, $category)
             if (!count($items)) {
                 echo "No new releases found.\n";
             }
+
             break;
         }
 
@@ -44,7 +52,11 @@ function templateReleases($post): array
     }
 
     // Post
-    $post_html = file_get_html($item['url']);
+    $post_html = (new HtmlWeb())->load($item['url']);
+
+    if (!$post_html) {
+        throw new RuntimeException('An error occurred trying to load ' . $item['url']);
+    }
 
     // Title
     $search = ['&#8217;', '&#8211;', ' View Article', '&nbsp;', '’', '–', '\u00a0'];

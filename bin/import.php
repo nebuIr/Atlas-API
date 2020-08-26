@@ -4,26 +4,29 @@ if (PHP_SAPI !== 'cli') {
 }
 
 if (!isset($argv[1])) {
-    throw new RuntimeException('Please provide a category [news, releases, version, all]');
+    echo 'Please provide a command [import, reimport, clear]';
+    exit();
 }
 
-require_once __DIR__ . '/../src/lib/simple_html_dom.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 // Configuration
 $url = 'https://www.nomanssky.com/';
 
-switch ($argv[2] ?? '') {
-    case '':
+switch ($argv[1]) {
     case 'import':
-        import($argv[1], $url);
+        import($argv[2], $url);
         break;
     case 'reimport':
-        clear($argv[1]);
-        import($argv[1], $url);
+        clear($argv[2]);
+        import($argv[2], $url);
         break;
     case 'clear':
-        clear($argv[1]);
+        clear($argv[2]);
         break;
+    default:
+        echo 'Please provide a valid command [import, reimport, clear]';
+        exit();
 }
 
 function import($category, $url) {
@@ -42,6 +45,9 @@ function import($category, $url) {
             importReleases($url);
             importVersion();
             break;
+        default:
+            echo 'Please provide a valid category [news, releases, version, all]';
+            exit();
     }
 }
 
@@ -61,6 +67,9 @@ function clear($category) {
             clearReleases();
             clearVersion();
             break;
+        default:
+            echo 'Please provide a valid category [news, releases, version, all]';
+            exit();
     }
 }
 

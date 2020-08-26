@@ -1,43 +1,42 @@
 <?php
 
+use simplehtmldom\HtmlWeb;
+
 function getNews($url, $category): array
 {
     $news = new News();
     $page = 1;
     $items = [];
     $result = [];
+    $done = false;
     $end_reached = false;
     do {
-        set_error_handler(
-            static function ($err_severity, $err_msg, $err_file, $err_line, array $err_context) {
-                if (error_reporting() === 0) {
-                    return false;
+        $html = (new HtmlWeb())->load($url . $category . '/page/' . $page);
+        $posts = ($html) ? $html->find('article') : [];
+
+        if (empty($posts)) {
+            $end_reached = true;
+        }
+
+        foreach ($posts as $post) {
+            $item = templateNews($post);
+
+            if ($news->getFieldByTimestamp('timestamp', $item['timestamp'])) {
+                if (!count($items)) {
+                    echo "No new news found.\n";
                 }
+                $end_reached = true;
 
-                throw new ErrorException($err_msg, 0, $err_severity, $err_file, $err_line);
-            },
-            E_WARNING
-        );
-        try {
-            $html = file_get_html($url . $category . '/page/' . $page);
-            $posts = $html->find('article');
-
-            foreach ($posts as $post) {
-                $item = templateNews($post);
-
-                if ($news->getFieldByTimestamp('timestamp', $item['timestamp'])) {
-                    if (!count($items)) {
-                        echo "No new news found.\n";
-                    }
-                    throw new \RuntimeException('Item already in DB');
-                }
-
-                echo 'Item added to array: ' . $item['title'] . "\n";
-                $items[] = $item;
+                break;
             }
 
-            $page++;
-        } catch (Exception $e) {
+            echo 'Item added to array: ' . $item['title'] . "\n";
+            $items[] = $item;
+        }
+
+        $page++;
+
+        if ($end_reached) {
             $db_count = $news->getItemCount();
             $count = count($items);
             foreach ($items as $item) {
@@ -46,12 +45,10 @@ function getNews($url, $category): array
                 --$count;
             }
 
-            $end_reached = true;
+            $done = true;
             break;
         }
-
-        restore_error_handler();
-    } while (!$end_reached);
+    } while (!$done);
 
     return $result;
 }
@@ -62,7 +59,11 @@ function templateNews($post): array
     $item['url'] = $post->find('a', 0)->href;
 
     // Post
-    $post_html = file_get_html($item['url']);
+    $post_html = (new HtmlWeb())->load($item['url']);
+
+    if (!$post_html) {
+        throw new RuntimeException('An error occurred trying to load ' . $item['url']);
+    }
 
     // Title
     $search = ['&#8217;', '&#8211;', ' View Article', '&nbsp;', '’', '–', '\u00a0'];

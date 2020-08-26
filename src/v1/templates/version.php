@@ -1,9 +1,11 @@
 <?php
 
+use simplehtmldom\HtmlWeb;
+
 function getVersion($url): array
 {
-    $html = file_get_html($url);
-    $post = $html->find('div.fplink', 0);
+    $html = (new HtmlWeb())->load($url);
+    $post = ($html) ? $html->find('div.fplink', 0) : [];
 
     return templateVersion($post);
 }
