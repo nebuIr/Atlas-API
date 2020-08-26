@@ -1,10 +1,13 @@
 {
   "require": {
-    "vlucas/phpdotenv": "^5.1",
     "php-di/php-di": "^6.2",
+    "simplehtmldom/simplehtmldom": "^2.0@RC",
+    "vlucas/phpdotenv": "^5.1",
+    "ext-curl": "*",
     "ext-json": "*",
+    "ext-mbstring": "*",
     "ext-mysqli": "*",
-    "simplehtmldom/simplehtmldom": "^2.0@RC"
+    "ext-openssl": "*"
   }
   ,
   "require-dev": {
