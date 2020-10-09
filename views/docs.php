@@ -20,8 +20,8 @@
 <body>
 <div id="swagger-ui"></div>
 
-<script src="../assets/js/swagger-ui-bundle.js"></script>
-<script src="../assets/js/swagger-ui-standalone-preset.js"></script>
+<script src="/assets/js/swagger-ui-bundle.js"></script>
+<script src="/assets/js/swagger-ui-standalone-preset.js"></script>
 <script>
     window.onload = function () {
         window.ui = SwaggerUIBundle({

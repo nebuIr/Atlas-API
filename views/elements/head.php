@@ -1,11 +1,6 @@
-<?php
-$url = 'https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
-?>
-
-<!-- Basic -->
+<!-- Meta -->
 <meta charset='UTF-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>
-<link href='/assets/css/style.css' type='text/css' rel='stylesheet'/>
 
 <!-- Favicon -->
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon/apple-touch-icon.png">
@@ -17,3 +12,7 @@ $url = 'https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 <meta name="msapplication-TileColor" content="#e14748">
 <meta name="msapplication-config" content="/assets/img/favicon/browserconfig.xml">
 <meta name="theme-color" content="#e14748">
+
+<!-- Assets -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap">
+<link href='/assets/css/style.min.css' type='text/css' rel='stylesheet'>

@@ -1,129 +1,45 @@
 <?php
+
+use AtlasAPI\Import\Import;
+use DI\ContainerBuilder;
+use Dotenv\Dotenv;
+use Psr\Container\ContainerInterface;
+
 if (PHP_SAPI !== 'cli') {
-    throw new RuntimeException('This application must be run on the command line.');
+    throw new RuntimeException("This application must be run on the command line\n");
 }
 
 if (!isset($argv[1])) {
-    echo 'Please provide a command [import, reimport, clear]';
+    echo "Please provide a command [import, reimport, clear]\n";
     exit();
 }
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-// Configuration
-$url = 'https://www.nomanssky.com/';
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
 
-switch ($argv[1]) {
-    case 'import':
-        import($argv[2], $url);
-        break;
-    case 'reimport':
-        clear($argv[2]);
-        import($argv[2], $url);
-        break;
-    case 'clear':
-        clear($argv[2]);
-        break;
-    default:
-        echo 'Please provide a valid command [import, reimport, clear]';
-        exit();
-}
+$containerBuilder = new ContainerBuilder();
+$containerBuilder->enableCompilation(__DIR__ . '/../var/cache');
 
-function import($category, $url) {
-    switch ($category) {
-        case 'news':
-            importNews($url);
-            break;
-        case 'releases':
-            importReleases($url);
-            break;
-        case 'version':
-            importVersion();
-            break;
-        case 'all':
-            importNews($url);
-            importReleases($url);
-            importVersion();
-            break;
-        default:
-            echo 'Please provide a valid category [news, releases, version, all]';
-            exit();
-    }
-}
+// Setup Settings
+$settings = require __DIR__ . '/../config/settings.php';
+$settings($containerBuilder);
 
-function clear($category) {
-    switch ($category) {
-        case 'news':
-            clearNews();
-            break;
-        case 'releases':
-            clearReleases();
-            break;
-        case 'version':
-            clearVersion();
-            break;
-        case 'all':
-            clearNews();
-            clearReleases();
-            clearVersion();
-            break;
-        default:
-            echo 'Please provide a valid category [news, releases, version, all]';
-            exit();
-    }
-}
+// Setup DB
+$containerBuilder->addDefinitions([
+    PDO::class => static function (ContainerInterface $container) {
+        $settings = $container->get('settings')['database'];
 
-function importNews($url) {
-    require_once __DIR__ . '/../src/v1/classes/News.php';
-    require_once __DIR__ . '/../src/v1/templates/news.php';
+        return new PDO(
+            'mysql:dbhost=' . $settings['dbhost'] . ';dbname=' . $settings['dbname'] . ';charset=UTF8',
+            $settings['dbuser'],
+            $settings['dbpass']
+        );
+    },
+]);
 
-    $news = new News();
-    $items = getNews($url, 'news');
+$container = $containerBuilder->build();
 
-    foreach ($items as $item) {
-        $news->SQLImport($item, 'add');
-    }
-}
-
-function importReleases($url) {
-    require_once __DIR__ . '/../src/v1/classes/Releases.php';
-    require_once __DIR__ . '/../src/v1/templates/releases.php';
-
-    $releases = new Releases();
-    $items = getRelease($url, 'release-log');
-
-    foreach ($items as $item) {
-        $releases->SQLImport($item, 'add');
-    }
-}
-
-function importVersion() {
-    require_once __DIR__ . '/../src/v1/classes/Version.php';
-    require_once __DIR__ . '/../src/v1/templates/version.php';
-
-    $version = new Version();
-    $url = 'https://nomanssky.gamepedia.com/';
-
-    $version->SQLImport(getVersion($url));
-}
-
-function clearNews() {
-    require_once __DIR__ . '/../src/v1/classes/News.php';
-
-    $news = new News();
-    $news->clearTable();
-}
-
-function clearReleases() {
-    require_once __DIR__ . '/../src/v1/classes/Releases.php';
-
-    $news = new Releases();
-    $news->clearTable();
-}
-
-function clearVersion() {
-    require_once __DIR__ . '/../src/v1/classes/Version.php';
-
-    $news = new Version();
-    $news->clearTable();
-}
+$obj = new Import();
+$obj->init($container, $argv);

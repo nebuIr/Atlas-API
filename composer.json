@@ -1,18 +1,28 @@
 {
   "require": {
-    "php-di/php-di": "^6.2",
-    "simplehtmldom/simplehtmldom": "^2.0@RC",
-    "vlucas/phpdotenv": "^5.1",
     "ext-curl": "*",
-    "ext-json": "*",
     "ext-mbstring": "*",
     "ext-mysqli": "*",
-    "ext-openssl": "*"
-  }
-  ,
+    "ext-openssl": "*",
+    "ext-pdo": "*",
+    "ext-json": "*",
+    "laminas/laminas-diactoros": "2.*",
+    "league/fractal": "^0.19.2",
+    "middlewares/trailing-slash": "1.*",
+    "php-di/php-di": "6.*",
+    "simplehtmldom/simplehtmldom": "^2.0@RC",
+    "slim/slim": "4.*",
+    "vlucas/phpdotenv": "5.*",
+    "phpfastcache/phpfastcache": "8.*"
+  },
   "require-dev": {
     "roave/security-advisories": "dev-master"
   },
   "minimum-stability": "dev",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "autoload": {
+    "psr-4": {
+      "AtlasAPI\\": "app/"
+    }
+  }
 }
