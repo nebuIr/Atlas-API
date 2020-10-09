@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Atlas API</title>
-    <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
-    <link rel="stylesheet" type="text/css" href="../assets/css/swagger-ui.css">
+    <link rel="stylesheet" type="text/css" href="../assets/docs/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../assets/docs/css/swagger-ui.css">
 
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon/favicon-32x32.png">
@@ -20,12 +20,12 @@
 <body>
 <div id="swagger-ui"></div>
 
-<script src="/assets/js/swagger-ui-bundle.js"></script>
-<script src="/assets/js/swagger-ui-standalone-preset.js"></script>
+<script src="/assets/docs/js/swagger-ui-bundle.js"></script>
+<script src="/assets/docs/js/swagger-ui-standalone-preset.js"></script>
 <script>
     window.onload = function () {
         window.ui = SwaggerUIBundle({
-            url: "/docs/v1/atlas.json",
+            url: "/assets/docs/v1/atlas.json",
             dom_id: '#swagger-ui',
             deepLinking: true,
             presets: [
