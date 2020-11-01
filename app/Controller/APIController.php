@@ -50,6 +50,10 @@ class APIController
                 }
             }
 
+            if ($type === 'latest' || $type === 'single') {
+                $items = $items[0];
+            }
+
             $Psr16Adapter->set($itemsKey, $items, 600);
         } else {
             $items = $Psr16Adapter->get($itemsKey);
