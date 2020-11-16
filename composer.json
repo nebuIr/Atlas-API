@@ -8,7 +8,7 @@
     "ext-json": "*",
     "laminas/laminas-diactoros": "2.*",
     "league/fractal": "^0.19.2",
-    "middlewares/trailing-slash": "1.*",
+    "middlewares/trailing-slash": "2.*",
     "php-di/php-di": "6.*",
     "simplehtmldom/simplehtmldom": "^2.0@RC",
     "slim/slim": "4.*",

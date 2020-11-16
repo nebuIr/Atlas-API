@@ -72,8 +72,8 @@ class ReleasesImport
 
     public function addSQLEntry($item): bool
     {
-        $stmt = $this->pdo->prepare('INSERT INTO releases (id, url, title, timestamp, platform_pc, platform_ps4, platform_xbox, platform_ms_store, excerpt, image, body) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-        if ($stmt->execute([$item['id'], $item['url'], $item['title'], (int) $item['timestamp'], $item['platforms']['pc'], $item['platforms']['ps4'], $item['platforms']['xbox'], $item['platforms']['ms-store'], $item['excerpt'], $item['image'], $item['body']])) {
+        $stmt = $this->pdo->prepare('INSERT INTO releases (id, url, title, timestamp, platform_pc, platform_ps4, platform_ps5, platform_xbox_one, platform_xbox_series, platform_ms_store, excerpt, image, body) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        if ($stmt->execute([$item['id'], $item['url'], $item['title'], (int) $item['timestamp'], $item['platforms']['pc'], $item['platforms']['ps4'], $item['platforms']['ps5'], $item['platforms']['xbox-one'], $item['platforms']['xbox-series'], $item['platforms']['ms-store'], $item['excerpt'], $item['image'], $item['body']])) {
             return true;
         }
         echo "[RELEASES] Import failed for: {$item['title']}\n";
@@ -83,8 +83,8 @@ class ReleasesImport
 
     public function updateSQLEntry($item): bool
     {
-        $stmt = $this->pdo->prepare('UPDATE releases SET url = ?, title = ?, timestamp = ?, platform_pc = ?, platform_ps4 = ?, platform_xbox = ?, platform_ms_store = ?, excerpt = ?, image = ?, body = ? WHERE id = ?');
-        if ($stmt->execute([$item['url'], $item['title'], (int) $item['timestamp'], $item['platforms']['pc'], $item['platforms']['ps4'], $item['platforms']['xbox'], $item['platforms']['ms-store'], $item['excerpt'], $item['image'], $item['body'], $item['id']])) {
+        $stmt = $this->pdo->prepare('UPDATE releases SET url = ?, title = ?, timestamp = ?, platform_pc = ?, platform_ps4 = ?, platform_ps5 = ?, platform_xbox_one = ?, platform_xbox_series = ?, platform_ms_store = ?, excerpt = ?, image = ?, body = ? WHERE id = ?');
+        if ($stmt->execute([$item['url'], $item['title'], (int) $item['timestamp'], $item['platforms']['pc'], $item['platforms']['ps4'], $item['platforms']['ps5'], $item['platforms']['xbox-one'], $item['platforms']['xbox-series'], $item['platforms']['ms-store'], $item['excerpt'], $item['image'], $item['body'], $item['id']])) {
             return true;
         }
         echo "[RELEASES] Import failed for: {$item['title']}\n";

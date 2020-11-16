@@ -123,11 +123,25 @@ class ReleasesTemplate
             $item['platforms']['ps4'] = (int)false;
         }
 
-        //XBOX
-        if ($post->find('div[style=margin-left:0;background-color:green;]')) {
-            $item['platforms']['xbox'] = (int)true;
+        //PS5
+        if ($post->find('div.platform--ps4[style=margin-left:0;background-color:white; color: black;]')) {
+            $item['platforms']['ps5'] = (int)true;
         } else {
-            $item['platforms']['xbox'] = (int)false;
+            $item['platforms']['ps5'] = (int)false;
+        }
+
+        //XBOX ONE
+        if ($post->find('div.platform--pc[style=margin-left:0;background-color:green;]')) {
+            $item['platforms']['xbox-one'] = (int)true;
+        } else {
+            $item['platforms']['xbox-one'] = (int)false;
+        }
+
+        //XBOX SERIES X/S
+        if ($post->find('div.platform--pc[style=margin-left:0;background-color:black;]')) {
+            $item['platforms']['xbox-series'] = (int)true;
+        } else {
+            $item['platforms']['xbox-series'] = (int)false;
         }
 
         //MICROSOFT STORE

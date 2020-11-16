@@ -16,7 +16,9 @@ class ReleaseTransformer extends TransformerAbstract
             'platforms' => [
                 'pc' => (bool) $row['platform_pc'],
                 'ps4' => (bool) $row['platform_ps4'],
-                'xbox' => (bool) $row['platform_xbox'],
+                'ps5' => (bool) $row['platform_ps5'],
+                'xbox-one' => (bool) $row['platform_xbox_one'],
+                'xbox-series' => (bool) $row['platform_xbox_series'],
                 'ms-store' => (bool) $row['platform_ms_store'],
             ],
             'images' => [
