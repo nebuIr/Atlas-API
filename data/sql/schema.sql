@@ -1,9 +1,8 @@
--- Generation Time: Oct 09, 2020 at 04:55 PM
+-- Generation Time: Dec 25, 2020 at 10:05 PM
 -- Server version: 5.7.31
--- PHP Version: 7.4.10
+-- PHP Version: 8.0.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -46,19 +45,21 @@ CREATE TABLE `news`
 
 CREATE TABLE `releases`
 (
-    `id`                int(11)      NOT NULL,
-    `url`               varchar(100) NOT NULL,
-    `title`             varchar(100) NOT NULL,
-    `timestamp`         int(100)     NOT NULL,
-    `platform_pc`       tinyint(1)   NOT NULL,
-    `platform_ps4`      tinyint(1)   NOT NULL,
-    `platform_xbox`     tinyint(1)   NOT NULL,
-    `platform_ms_store` tinyint(1)   NOT NULL,
-    `excerpt`           varchar(500) NOT NULL,
-    `image`             varchar(200) NOT NULL,
-    `body`              mediumtext   NOT NULL,
-    `last_update`       timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `created`           timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP
+    `id`                    int(11)      NOT NULL,
+    `url`                   varchar(100) NOT NULL,
+    `title`                 varchar(100) NOT NULL,
+    `timestamp`             int(100)     NOT NULL,
+    `platform_pc`           tinyint(1)   NOT NULL,
+    `platform_ps4`          tinyint(1)   NOT NULL,
+    `platform_ps5`          tinyint(1)   NOT NULL,
+    `platform_xbox_one`     tinyint(1)   NOT NULL,
+    `platform_xbox_series`  tinyint(1)   NOT NULL,
+    `platform_ms_store`     tinyint(1)   NOT NULL,
+    `excerpt`               varchar(500) NOT NULL,
+    `image`                 varchar(200) NOT NULL,
+    `body`                  mediumtext   NOT NULL,
+    `last_update`           timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `created`               timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
