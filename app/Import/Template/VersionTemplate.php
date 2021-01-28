@@ -23,7 +23,7 @@ class VersionTemplate
         $item['url'] = $post->find('a', 0)->href;
         $baseUri = 'nomanssky.gamepedia.com';
         $baseUriSSL = 'https://nomanssky.gamepedia.com';
-        if (strpos($item['url'], $baseUri) === false) {
+        if (!str_contains($item['url'], $baseUri)) {
             $item['url'] = $baseUriSSL . $item['url'];
         }
 

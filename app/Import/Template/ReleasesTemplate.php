@@ -82,7 +82,7 @@ class ReleasesTemplate
         $item['url'] = $post->find('a', 0)->href;
         $baseUri = 'www.nomanssky.com';
         $baseUriSSL = 'https://www.nomanssky.com';
-        if (strpos($item['url'], $baseUri) === false) {
+        if (!str_contains($item['url'], $baseUri)) {
             $item['url'] = $baseUriSSL . $item['url'];
         }
 
@@ -104,51 +104,62 @@ class ReleasesTemplate
         $item['timestamp'] = strtotime($item['timestamp']);
 
         // Platforms
-        //PC
+        // PC
+        $item['platforms']['pc'] = (int)false;
+
         if ($post->find('div.platform--pc')) {
             $pc = $post->find('div.platform--pc', 0)->plaintext;
+
             if ($pc === 'PC') {
                 $item['platforms']['pc'] = (int)true;
-            } else {
-                $item['platforms']['pc'] = (int)false;
             }
-        } else {
-            $item['platforms']['pc'] = (int)false;
         }
 
-        //PS4
+        // PS4 & PS5
+        $item['platforms']['ps4'] = (int)false;
+        $item['platforms']['ps5'] = (int)false;
+
         if ($post->find('div.platform--ps4')) {
-            $item['platforms']['ps4'] = (int)true;
-        } else {
-            $item['platforms']['ps4'] = (int)false;
+            $ps = $post->find('div.platform--ps4');
+
+            foreach ($ps as $ps_) {
+                $ps_ = $ps_->plaintext;
+
+                if ($ps_ === 'PS4') {
+                    $item['platforms']['ps4'] = (int)true;
+                }
+
+                if ($ps_ === 'PS5') {
+                    $item['platforms']['ps5'] = (int)true;
+                }
+            }
         }
 
-        //PS5
-        if ($post->find('div.platform--ps4[style=margin-left:0;background-color:white; color: black;]')) {
-            $item['platforms']['ps5'] = (int)true;
-        } else {
-            $item['platforms']['ps5'] = (int)false;
+        // XBOX ONE & XBOX SERIES X/S
+        $item['platforms']['xbox-one'] = (int)false;
+        $item['platforms']['xbox-series'] = (int)false;
+
+        if ($post->find('div.platform--xbox')) {
+            $xbox = $post->find('div.platform--xbox');
+
+            foreach ($xbox as $xbox_) {
+                $xbox_ = $xbox_->plaintext;
+
+                if ($xbox_ === 'Xbox One') {
+                    $item['platforms']['xbox-one'] = (int)true;
+                }
+
+                if ($xbox_ === 'Xbox Series X/S') {
+                    $item['platforms']['xbox-series'] = (int)true;
+                }
+            }
         }
 
-        //XBOX ONE
-        if ($post->find('div.platform--pc[style=margin-left:0;background-color:green;]')) {
-            $item['platforms']['xbox-one'] = (int)true;
-        } else {
-            $item['platforms']['xbox-one'] = (int)false;
-        }
+        // MICROSOFT STORE
+        $item['platforms']['ms-store'] = (int)false;
 
-        //XBOX SERIES X/S
-        if ($post->find('div.platform--pc[style=margin-left:0;background-color:black;]')) {
-            $item['platforms']['xbox-series'] = (int)true;
-        } else {
-            $item['platforms']['xbox-series'] = (int)false;
-        }
-
-        //MICROSOFT STORE
-        if ($post->find('div[style=margin-left:0;background-color:grey;]')) {
+        if ($post->find('div.platform--pc[style=margin-left:0;background-color:grey;]')) {
             $item['platforms']['ms-store'] = (int)true;
-        } else {
-            $item['platforms']['ms-store'] = (int)false;
         }
 
         // Excerpt
