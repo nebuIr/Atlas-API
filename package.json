@@ -1,6 +1,6 @@
 {
   "scripts": {
-      "heroku-prebuild": "npm install -f"
+    "heroku-prebuild": "npm install -f"
   },
   "dependencies": {
     "cron": "^1.8.2"
