@@ -1,0 +1,25 @@
+{
+    "name": "Atlas-API",
+    "description": "API for No Man's Sky news, releases and game version",
+    "repository": "https://github.com/xnebulr/Atlas-API",
+    "scripts": {
+        "dokku": {
+        }
+    },
+    "formation": {
+        "web": {
+            "quantity": 1
+        },
+        "cron": {
+            "quantity": 1
+        }
+    },
+    "buildpacks": [
+        {
+            "url": "https://github.com/heroku/heroku-buildpack-php.git"
+        },
+        {
+            "url": "https://github.com/heroku/heroku-buildpack-nodejs.git"
+        }
+    ]
+}
