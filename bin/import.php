@@ -32,7 +32,7 @@ $containerBuilder->addDefinitions([
         $settings = $container->get('settings')['database'];
 
         return new PDO(
-            'mysql:host=' . $settings['dbhost'] . ';port=' . $settings['dbport'] . ';dbname=' . $settings['dbname'] . ';charset=UTF8',
+            'mysql:host=' . $settings['dbhost'] . ';port=' . $settings['dbport'] . ';dbname=' . $settings['dbname'] . ';charset=utf8mb4',
             $settings['dbuser'],
             $settings['dbpass']
         );
