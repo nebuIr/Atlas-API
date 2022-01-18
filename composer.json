@@ -10,14 +10,14 @@
     "ext-openssl": "*",
     "ext-pdo": "*",
     "ext-json": "*",
-    "laminas/laminas-diactoros": "^2.6",
+    "laminas/laminas-diactoros": "^2.8",
     "league/fractal": "^0.19.2",
     "middlewares/trailing-slash": "^2.0",
     "php-di/php-di": "^6.3",
     "simplehtmldom/simplehtmldom": "^2.0@RC",
-    "slim/slim": "^4.8",
-    "vlucas/phpdotenv": "^5.3",
-    "phpfastcache/phpfastcache": "^8.0"
+    "slim/slim": "^4.9",
+    "vlucas/phpdotenv": "^5.4",
+    "phpfastcache/phpfastcache": "^9.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest"
