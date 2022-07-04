@@ -5,12 +5,13 @@
   "require": {
     "php": "^8.0",
     "ext-curl": "*",
+    "ext-iconv": "*",
+    "ext-json": "*",
     "ext-mbstring": "*",
     "ext-mysqli": "*",
     "ext-openssl": "*",
     "ext-pdo": "*",
-    "ext-json": "*",
-    "laminas/laminas-diactoros": "^2.9",
+    "laminas/laminas-diactoros": "^2.11",
     "league/fractal": "^0.20.1",
     "middlewares/trailing-slash": "^2.0",
     "php-di/php-di": "^6.4",
@@ -20,7 +21,7 @@
     "phpfastcache/phpfastcache": "^9.1"
   },
   "require-dev": {
-    "roave/security-advisories": "dev-latest"
+    "roave/security-advisories": "dev-master"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
