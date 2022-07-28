@@ -11,7 +11,7 @@
     "ext-mysqli": "*",
     "ext-openssl": "*",
     "ext-pdo": "*",
-    "laminas/laminas-diactoros": "^2.11",
+    "laminas/laminas-diactoros": "^2.14",
     "league/fractal": "^0.20.1",
     "middlewares/trailing-slash": "^2.0",
     "php-di/php-di": "^6.4",
