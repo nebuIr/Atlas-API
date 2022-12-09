@@ -11,13 +11,13 @@
     "ext-mysqli": "*",
     "ext-openssl": "*",
     "ext-pdo": "*",
-    "laminas/laminas-diactoros": "^2.14",
+    "laminas/laminas-diactoros": "^2.22",
     "league/fractal": "^0.20.1",
     "middlewares/trailing-slash": "^2.0",
     "php-di/php-di": "^6.4",
     "simplehtmldom/simplehtmldom": "^2.0@RC",
-    "slim/slim": "^4.10",
-    "vlucas/phpdotenv": "^5.4",
+    "slim/slim": "^4.11",
+    "vlucas/phpdotenv": "^5.5",
     "phpfastcache/phpfastcache": "^9.1"
   },
   "require-dev": {
