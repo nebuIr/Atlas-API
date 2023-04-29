@@ -3,6 +3,6 @@
     "heroku-prebuild": "npm install -f"
   },
   "dependencies": {
-    "cron": "^2.1.0"
+    "cron": "^2.3.0"
   }
 }
