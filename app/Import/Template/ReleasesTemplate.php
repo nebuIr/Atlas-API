@@ -118,6 +118,7 @@ class ReleasesTemplate
         // PS4 & PS5
         $item['platforms']['ps4'] = (int)false;
         $item['platforms']['ps5'] = (int)false;
+        $item['platforms']['nintendo-switch'] = (int)false;
 
         if ($post->find('div.platform--ps4')) {
             $ps = $post->find('div.platform--ps4');
@@ -132,12 +133,17 @@ class ReleasesTemplate
                 if ($ps_ === 'PS5') {
                     $item['platforms']['ps5'] = (int)true;
                 }
+
+                if ($ps_ === 'Nintendo Switch') {
+                    $item['platforms']['nintendo-switch'] = (int)true;
+                }
             }
         }
 
         // XBOX ONE & XBOX SERIES X/S
         $item['platforms']['xbox-one'] = (int)false;
         $item['platforms']['xbox-series'] = (int)false;
+        $item['platforms']['xbox-game-pass'] = (int)false;
 
         if ($post->find('div.platform--xbox')) {
             $xbox = $post->find('div.platform--xbox');
@@ -152,6 +158,19 @@ class ReleasesTemplate
                 if ($xbox_ === 'Xbox Series X/S') {
                     $item['platforms']['xbox-series'] = (int)true;
                 }
+
+                if ($xbox_ === 'Xbox Game Pass') {
+                    $item['platforms']['xbox-game-pass'] = (int)true;
+                }
+            }
+        }
+
+        // NINTENDO SWITCH
+        if ($post->find('div.platform--switch')) {
+            $switch = $post->find('div.platform--switch', 0)->plaintext;
+
+            if ($switch === 'Nintendo Switch') {
+                $item['platforms']['nintendo-switch'] = (int)true;
             }
         }
 
