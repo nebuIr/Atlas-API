@@ -347,6 +347,10 @@
             "type": "string",
             "example": "title"
           },
+          "timestamp": {
+            "type": "integer",
+            "example": 1573833735
+          },
           "platforms": {
             "$ref": "#/components/schemas/Platforms"
           },
@@ -392,7 +396,23 @@
             "type": "boolean",
             "example": false
           },
-          "xbox": {
+          "ps5": {
+            "type": "boolean",
+            "example": false
+          },
+          "xbox-one": {
+            "type": "boolean",
+            "example": false
+          },
+          "xbox-series": {
+            "type": "boolean",
+            "example": false
+          },
+          "xbox-game-pass": {
+            "type": "boolean",
+            "example": false
+          },
+          "nintendo-switch": {
             "type": "boolean",
             "example": false
           },
