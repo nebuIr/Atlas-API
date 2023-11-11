@@ -3,7 +3,7 @@
   "type": "project",
   "description": "API for No Man's Sky news, releases and game version",
   "require": {
-    "php": "^8.0",
+    "php": "^8.2",
     "ext-curl": "*",
     "ext-iconv": "*",
     "ext-json": "*",
@@ -11,12 +11,12 @@
     "ext-mysqli": "*",
     "ext-openssl": "*",
     "ext-pdo": "*",
-    "laminas/laminas-diactoros": "^2.25",
+    "laminas/laminas-diactoros": "^3.3",
     "league/fractal": "^0.20.1",
     "middlewares/trailing-slash": "^2.0",
     "php-di/php-di": "^7.0",
     "simplehtmldom/simplehtmldom": "^2.0@RC",
-    "slim/slim": "^4.11",
+    "slim/slim": "^4.12",
     "vlucas/phpdotenv": "^5.5",
     "phpfastcache/phpfastcache": "^9.1"
   },

@@ -7,10 +7,9 @@ let scheduleRun = function () {
 }
 
 let CronJob = require('cron').CronJob;
-new CronJob(
-    '0,30 * * * *',
-    scheduleRun,
-    null,
-    true,
-    'Europe/Berlin'
-);
+const job = CronJob.from({
+    cronTime: '0,30 * * * *',
+    onTick: scheduleRun,
+    start: true,
+    timeZone: 'Europe/Berlin'
+});
