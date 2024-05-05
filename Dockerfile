@@ -13,7 +13,7 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 # Install dependencies
 RUN apt-get update && \
     apt-get install -y libzip-dev zip && \
-    docker-php-ext-install zip mysqli
+    docker-php-ext-install zip mysqli pdo pdo_mysql
 
 # Install Composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
