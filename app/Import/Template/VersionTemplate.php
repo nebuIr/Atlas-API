@@ -11,21 +11,23 @@ class VersionTemplate
         $html = (new HtmlWeb())->load($url);
         $post = ($html) ? $html->find('div.fplink', 0) : [];
 
-        return $this->templateVersion($post);
+        return $this->templateVersion($post, $url);
     }
 
-    public function templateVersion($post): array
+    public function templateVersion($post, $url): array
     {
         // ID
         $item['id'] = 0;
 
         // URL
         $item['url'] = $post->find('a', 0)->href;
-        $baseUri = 'nomanssky.gamepedia.com';
-        $baseUriSSL = 'https://nomanssky.gamepedia.com';
-        if (!str_contains($item['url'], $baseUri)) {
-            $item['url'] = $baseUriSSL . $item['url'];
+
+        // Check and add the missing URL part if necessary
+        $parsed_url = parse_url($item['url']);
+        if (!isset($parsed_url['scheme'])) {
+            $item['url'] = rtrim($url, '/') . '/' . ltrim($item['url'], '/');
         }
+        $item['url'] = str_replace('http://', 'https://', $item['url']);
 
         // Version
         $item['version'] = $post->find('a', 0)->plaintext;
@@ -36,6 +38,10 @@ class VersionTemplate
         $item['timestamp'] = $post->plaintext;
         $item['timestamp'] = explode('(', $item['timestamp'])[1];
         $item['timestamp'] = strtotime(str_replace($search, $replace, $item['timestamp']));
+
+        if (!$item['timestamp']) {
+            $item['timestamp'] = 0;
+        }
 
         echo '[VERSION] Version found: ' . $item['version'] . "\n";
 

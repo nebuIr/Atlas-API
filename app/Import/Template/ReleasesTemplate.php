@@ -36,7 +36,7 @@ class ReleasesTemplate
                 $category . $post->find('h2', 0)->plaintext . $post->find('a', 0)->href);
 
             if (!$this->Psr16Adapter->has($postKey)) {
-                $item = $this->templateReleases($post);
+                $item = $this->templateReleases($post, $url);
 
                 if ($releases->getFieldByURL('url', $item['url'])) {
                     if (!count($items)) {
@@ -76,15 +76,17 @@ class ReleasesTemplate
         return $result;
     }
 
-    public function templateReleases($post): array
+    public function templateReleases($post, $url): array
     {
         // URL
         $item['url'] = $post->find('a', 0)->href;
-        $baseUri = 'www.nomanssky.com';
-        $baseUriSSL = 'https://www.nomanssky.com';
-        if (!str_contains($item['url'], $baseUri)) {
-            $item['url'] = $baseUriSSL . $item['url'];
+
+        // Check and add the missing URL part if necessary
+        $parsed_url = parse_url($item['url']);
+        if (!isset($parsed_url['scheme'])) {
+            $item['url'] = rtrim($url, '/') . '/' . ltrim($item['url'], '/');
         }
+        $item['url'] = str_replace('http://', 'https://', $item['url']);
 
         // Post
         $post_html = (new HtmlWeb())->load($item['url']);
@@ -101,6 +103,11 @@ class ReleasesTemplate
 
         // Timestamp
         $item['timestamp'] = $post_html->find('meta[property=article:published_time]', 0)->content ?? 0;
+
+        if (!$item['timestamp']) {
+            $item['timestamp'] = $post_html->find('span.date', 0)->plaintext ?? 0;
+        }
+
         $item['timestamp'] = strtotime($item['timestamp']);
 
         // Platforms
@@ -115,10 +122,20 @@ class ReleasesTemplate
             }
         }
 
+        // NINTENDO SWITCH
+        $item['platforms']['nintendo-switch'] = (int)false;
+
+        if ($post->find('div.platform--switch')) {
+            $switch = $post->find('div.platform--switch', 0)->plaintext;
+
+            if ($switch === 'Nintendo Switch') {
+                $item['platforms']['nintendo-switch'] = (int)true;
+            }
+        }
+
         // PS4 & PS5
         $item['platforms']['ps4'] = (int)false;
         $item['platforms']['ps5'] = (int)false;
-        $item['platforms']['nintendo-switch'] = (int)false;
 
         if ($post->find('div.platform--ps4')) {
             $ps = $post->find('div.platform--ps4');
@@ -162,15 +179,6 @@ class ReleasesTemplate
                 if ($xbox_ === 'Xbox Game Pass') {
                     $item['platforms']['xbox-game-pass'] = (int)true;
                 }
-            }
-        }
-
-        // NINTENDO SWITCH
-        if ($post->find('div.platform--switch')) {
-            $switch = $post->find('div.platform--switch', 0)->plaintext;
-
-            if ($switch === 'Nintendo Switch') {
-                $item['platforms']['nintendo-switch'] = (int)true;
             }
         }
 

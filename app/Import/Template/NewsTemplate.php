@@ -49,7 +49,7 @@ class NewsTemplate
                     $category . $page . $post->find('a', 0)->title . $post->find('a', 0)->href);
 
                 if (!$this->Psr16Adapter->has($postKey)) {
-                    $item = $this->templateNews($post);
+                    $item = $this->templateNews($post, $url);
 
                     if ($news->getFieldByTimestamp('timestamp', $item['timestamp'])) {
                         if (!count($items)) {
@@ -89,10 +89,17 @@ class NewsTemplate
         return $result;
     }
 
-    public function templateNews($post): array
+    public function templateNews($post, $url): array
     {
         // URL
         $item['url'] = $post->find('a', 0)->href;
+
+        // Check and add the missing URL part if necessary
+        $parsed_url = parse_url($item['url']);
+        if (!isset($parsed_url['scheme'])) {
+            $item['url'] = rtrim($url, '/') . '/' . ltrim($item['url'], '/');
+        }
+        $item['url'] = str_replace('http://', 'https://', $item['url']);
 
         // Post
         $post_html = (new HtmlWeb())->load($item['url']);
@@ -108,7 +115,12 @@ class NewsTemplate
         $item['title'] = str_replace($search, $replace, $item['title']);
 
         // Timestamp
-        $item['timestamp'] = $post_html->find('meta[property=article:published_time]', 0)->content;
+        $item['timestamp'] = $post_html->find('meta[property=article:published_time]', 0)->content ?? 0;
+
+        if (!$item['timestamp']) {
+            $item['timestamp'] = $post_html->find('span.date', 0)->plaintext ?? 0;
+        }
+
         $item['timestamp'] = strtotime($item['timestamp']);
 
         // Excerpt
