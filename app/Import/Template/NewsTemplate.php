@@ -28,7 +28,7 @@ class NewsTemplate
             throw new RuntimeException('An error occurred trying to load ' . $url . $category);
         }
 
-        $pages = $html->find('span.page-numbers.dots', 0)->next_sibling()->innertext;
+        $pages = $html->find('span.page-numbers.dots', 0)->next_sibling()->innertext ?? 1;
         $items = [];
         $result = [];
 
